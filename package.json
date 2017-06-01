@@ -1,7 +1,7 @@
 {
   "name": "peercam",
   "version": "0.0.0",
-  "description": "Video Sharing over WebRTC",
+  "description": "Cam Sharing over WebTorrent",
   "main": "index.js",
   "scripts": {
     "start": "node examples/server.js",
