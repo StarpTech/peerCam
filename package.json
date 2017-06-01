@@ -1,0 +1,47 @@
+{
+  "name": "peercam",
+  "version": "0.0.0",
+  "description": "Video Sharing over WebRTC",
+  "main": "index.js",
+  "scripts": {
+    "start": "node examples/server.js",
+    "devstart": "nodemon examples/server.js",
+    "postinstall": "npm install bufferutil@1.2.x utf-8-validate@1.2.x",
+    "build": "webpack -w",
+    "min": "PROD_ENV=1 webpack",
+    "test": "./node_modules/mocha/bin/mocha ./test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StarpTech/peerCam.git"
+  },
+  "author": "Dustin Deus <deusdustin@gmail.com> (http://www.starptech.de)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StarpTech/peerCam/issues"
+  },
+  "homepage": "https://github.com/StarpTech/peerCam#readme",
+  "dependencies": {
+    "bittorrent-tracker": "^9.2.2",
+    "body-parser": "^1.17.2",
+    "eventemitter3": "^2.0.3",
+    "express": "^4.15.3",
+    "fs": "0.0.1-security",
+    "msr": "^1.3.4",
+    "path": "^0.12.7",
+    "socket.io": "^2.0.2",
+    "socket.io-client": "^2.0.2",
+    "url": "^0.11.0",
+    "util": "^0.10.3",
+    "webrtc-adapter": "^3.4.3",
+    "webtorrent": "^0.98.18"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
+  }
+}
