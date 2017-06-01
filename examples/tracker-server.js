@@ -13,7 +13,8 @@ const server = new Server({
     // It is possible to block by peer id (whitelisting torrent clients) or by secret
     // key (private trackers). Full access to the original HTTP/UDP request parameters
     // are available in `params`.
-
+    console.log('info hash: ', infoHash)
+    console.log('params: ', params)
     cb(null)
   }
 })

@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 144);
+/******/ 	return __webpack_require__(__webpack_require__.s = 55);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,8 +91,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 
-var base64 = __webpack_require__(55);
-var ieee754 = __webpack_require__(73);
+var base64 = __webpack_require__(57);
+var ieee754 = __webpack_require__(75);
 var isArray = __webpack_require__(33);
 
 exports.Buffer = Buffer;
@@ -2058,7 +2058,7 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(42);
 exports.Duplex = __webpack_require__(11);
 exports.Transform = __webpack_require__(41);
-exports.PassThrough = __webpack_require__(96);
+exports.PassThrough = __webpack_require__(98);
 
 /***/ }),
 /* 4 */
@@ -2105,7 +2105,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(67);
+exports = module.exports = __webpack_require__(69);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -2571,7 +2571,7 @@ module.exports = __webpack_require__(0);
 "use strict";
 
 
-var wrappy = __webpack_require__(124);
+var wrappy = __webpack_require__(126);
 module.exports = wrappy(once);
 module.exports.strict = wrappy(onceStrict);
 
@@ -2866,7 +2866,7 @@ var objectKeys = Object.keys || function (obj) {
 module.exports = Duplex;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(23);
+var processNextTick = __webpack_require__(24);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -3145,7 +3145,7 @@ module.exports = function (tasks, cb) {
 "use strict";
 
 
-var Rusha = __webpack_require__(100);
+var Rusha = __webpack_require__(102);
 
 var rusha = new Rusha();
 var scope = typeof window !== 'undefined' ? window : self;
@@ -3216,8 +3216,8 @@ module.exports.sync = sha1sync;
 
 var bencode = module.exports;
 
-bencode.encode = __webpack_require__(57);
-bencode.decode = __webpack_require__(56
+bencode.encode = __webpack_require__(59);
+bencode.decode = __webpack_require__(58
 
 /**
  * Determines the amount of bytes
@@ -3309,9 +3309,9 @@ if (true) module.exports = BitField;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
 // var assert = require('assert')
-var uint64be = __webpack_require__(112);
+var uint64be = __webpack_require__(114);
 
-var boxes = __webpack_require__(81);
+var boxes = __webpack_require__(83);
 
 var UINT32_MAX = 4294967295;
 
@@ -3609,2023 +3609,6 @@ module.exports = unique;
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var buffer = __webpack_require__(0);
-var Buffer = buffer.Buffer;
-var SlowBuffer = buffer.SlowBuffer;
-var MAX_LEN = buffer.kMaxLength || 2147483647;
-exports.alloc = function alloc(size, fill, encoding) {
-  if (typeof Buffer.alloc === 'function') {
-    return Buffer.alloc(size, fill, encoding);
-  }
-  if (typeof encoding === 'number') {
-    throw new TypeError('encoding must not be number');
-  }
-  if (typeof size !== 'number') {
-    throw new TypeError('size must be a number');
-  }
-  if (size > MAX_LEN) {
-    throw new RangeError('size is too large');
-  }
-  var enc = encoding;
-  var _fill = fill;
-  if (_fill === undefined) {
-    enc = undefined;
-    _fill = 0;
-  }
-  var buf = new Buffer(size);
-  if (typeof _fill === 'string') {
-    var fillBuf = new Buffer(_fill, enc);
-    var flen = fillBuf.length;
-    var i = -1;
-    while (++i < size) {
-      buf[i] = fillBuf[i % flen];
-    }
-  } else {
-    buf.fill(_fill);
-  }
-  return buf;
-};
-exports.allocUnsafe = function allocUnsafe(size) {
-  if (typeof Buffer.allocUnsafe === 'function') {
-    return Buffer.allocUnsafe(size);
-  }
-  if (typeof size !== 'number') {
-    throw new TypeError('size must be a number');
-  }
-  if (size > MAX_LEN) {
-    throw new RangeError('size is too large');
-  }
-  return new Buffer(size);
-};
-exports.from = function from(value, encodingOrOffset, length) {
-  if (typeof Buffer.from === 'function' && (!global.Uint8Array || Uint8Array.from !== Buffer.from)) {
-    return Buffer.from(value, encodingOrOffset, length);
-  }
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number');
-  }
-  if (typeof value === 'string') {
-    return new Buffer(value, encodingOrOffset);
-  }
-  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
-    var offset = encodingOrOffset;
-    if (arguments.length === 1) {
-      return new Buffer(value);
-    }
-    if (typeof offset === 'undefined') {
-      offset = 0;
-    }
-    var len = length;
-    if (typeof len === 'undefined') {
-      len = value.byteLength - offset;
-    }
-    if (offset >= value.byteLength) {
-      throw new RangeError('\'offset\' is out of bounds');
-    }
-    if (len > value.byteLength - offset) {
-      throw new RangeError('\'length\' is out of bounds');
-    }
-    return new Buffer(value.slice(offset, offset + len));
-  }
-  if (Buffer.isBuffer(value)) {
-    var out = new Buffer(value.length);
-    value.copy(out, 0, 0, value.length);
-    return out;
-  }
-  if (value) {
-    if (Array.isArray(value) || typeof ArrayBuffer !== 'undefined' && value.buffer instanceof ArrayBuffer || 'length' in value) {
-      return new Buffer(value);
-    }
-    if (value.type === 'Buffer' && Array.isArray(value.data)) {
-      return new Buffer(value.data);
-    }
-  }
-
-  throw new TypeError('First argument must be a string, Buffer, ' + 'ArrayBuffer, Array, or array-like object.');
-};
-exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
-  if (typeof Buffer.allocUnsafeSlow === 'function') {
-    return Buffer.allocUnsafeSlow(size);
-  }
-  if (typeof size !== 'number') {
-    throw new TypeError('size must be a number');
-  }
-  if (size >= MAX_LEN) {
-    throw new RangeError('size is too large');
-  }
-  return new SlowBuffer(size);
-};
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var punycode = __webpack_require__(91);
-var util = __webpack_require__(88);
-
-exports.parse = urlParse;
-exports.resolve = urlResolve;
-exports.resolveObject = urlResolveObject;
-exports.format = urlFormat;
-
-exports.Url = Url;
-
-function Url() {
-  this.protocol = null;
-  this.slashes = null;
-  this.auth = null;
-  this.host = null;
-  this.port = null;
-  this.hostname = null;
-  this.hash = null;
-  this.search = null;
-  this.query = null;
-  this.pathname = null;
-  this.path = null;
-  this.href = null;
-}
-
-// Reference: RFC 3986, RFC 1808, RFC 2396
-
-// define these here so at least they only have to be
-// compiled once on the first module load.
-var protocolPattern = /^([a-z0-9.+-]+:)/i,
-    portPattern = /:[0-9]*$/,
-
-
-// Special case for a simple path URL
-simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/,
-
-
-// RFC 2396: characters reserved for delimiting URLs.
-// We actually just auto-escape these.
-delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
-
-
-// RFC 2396: characters not allowed for various reasons.
-unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
-
-
-// Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-autoEscape = ['\''].concat(unwise),
-
-// Characters that are never ever allowed in a hostname.
-// Note that any invalid chars are also handled, but these
-// are the ones that are *expected* to be seen, so we fast-path
-// them.
-nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
-    hostEndingChars = ['/', '?', '#'],
-    hostnameMaxLen = 255,
-    hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/,
-    hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/,
-
-// protocols that can allow "unsafe" and "unwise" chars.
-unsafeProtocol = {
-  'javascript': true,
-  'javascript:': true
-},
-
-// protocols that never have a hostname.
-hostlessProtocol = {
-  'javascript': true,
-  'javascript:': true
-},
-
-// protocols that always contain a // bit.
-slashedProtocol = {
-  'http': true,
-  'https': true,
-  'ftp': true,
-  'gopher': true,
-  'file': true,
-  'http:': true,
-  'https:': true,
-  'ftp:': true,
-  'gopher:': true,
-  'file:': true
-},
-    querystring = __webpack_require__(39);
-
-function urlParse(url, parseQueryString, slashesDenoteHost) {
-  if (url && util.isObject(url) && url instanceof Url) return url;
-
-  var u = new Url();
-  u.parse(url, parseQueryString, slashesDenoteHost);
-  return u;
-}
-
-Url.prototype.parse = function (url, parseQueryString, slashesDenoteHost) {
-  if (!util.isString(url)) {
-    throw new TypeError("Parameter 'url' must be a string, not " + (typeof url === 'undefined' ? 'undefined' : _typeof(url)));
-  }
-
-  // Copy chrome, IE, opera backslash-handling behavior.
-  // Back slashes before the query string get converted to forward slashes
-  // See: https://code.google.com/p/chromium/issues/detail?id=25916
-  var queryIndex = url.indexOf('?'),
-      splitter = queryIndex !== -1 && queryIndex < url.indexOf('#') ? '?' : '#',
-      uSplit = url.split(splitter),
-      slashRegex = /\\/g;
-  uSplit[0] = uSplit[0].replace(slashRegex, '/');
-  url = uSplit.join(splitter);
-
-  var rest = url;
-
-  // trim before proceeding.
-  // This is to support parse stuff like "  http://foo.com  \n"
-  rest = rest.trim();
-
-  if (!slashesDenoteHost && url.split('#').length === 1) {
-    // Try fast path regexp
-    var simplePath = simplePathPattern.exec(rest);
-    if (simplePath) {
-      this.path = rest;
-      this.href = rest;
-      this.pathname = simplePath[1];
-      if (simplePath[2]) {
-        this.search = simplePath[2];
-        if (parseQueryString) {
-          this.query = querystring.parse(this.search.substr(1));
-        } else {
-          this.query = this.search.substr(1);
-        }
-      } else if (parseQueryString) {
-        this.search = '';
-        this.query = {};
-      }
-      return this;
-    }
-  }
-
-  var proto = protocolPattern.exec(rest);
-  if (proto) {
-    proto = proto[0];
-    var lowerProto = proto.toLowerCase();
-    this.protocol = lowerProto;
-    rest = rest.substr(proto.length);
-  }
-
-  // figure out if it's got a host
-  // user@server is *always* interpreted as a hostname, and url
-  // resolution will treat //foo/bar as host=foo,path=bar because that's
-  // how the browser resolves relative URLs.
-  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
-    var slashes = rest.substr(0, 2) === '//';
-    if (slashes && !(proto && hostlessProtocol[proto])) {
-      rest = rest.substr(2);
-      this.slashes = true;
-    }
-  }
-
-  if (!hostlessProtocol[proto] && (slashes || proto && !slashedProtocol[proto])) {
-
-    // there's a hostname.
-    // the first instance of /, ?, ;, or # ends the host.
-    //
-    // If there is an @ in the hostname, then non-host chars *are* allowed
-    // to the left of the last @ sign, unless some host-ending character
-    // comes *before* the @-sign.
-    // URLs are obnoxious.
-    //
-    // ex:
-    // http://a@b@c/ => user:a@b host:c
-    // http://a@b?@c => user:a host:c path:/?@c
-
-    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
-    // Review our test case against browsers more comprehensively.
-
-    // find the first instance of any hostEndingChars
-    var hostEnd = -1;
-    for (var i = 0; i < hostEndingChars.length; i++) {
-      var hec = rest.indexOf(hostEndingChars[i]);
-      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) hostEnd = hec;
-    }
-
-    // at this point, either we have an explicit point where the
-    // auth portion cannot go past, or the last @ char is the decider.
-    var auth, atSign;
-    if (hostEnd === -1) {
-      // atSign can be anywhere.
-      atSign = rest.lastIndexOf('@');
-    } else {
-      // atSign must be in auth portion.
-      // http://a@b/c@d => host:b auth:a path:/c@d
-      atSign = rest.lastIndexOf('@', hostEnd);
-    }
-
-    // Now we have a portion which is definitely the auth.
-    // Pull that off.
-    if (atSign !== -1) {
-      auth = rest.slice(0, atSign);
-      rest = rest.slice(atSign + 1);
-      this.auth = decodeURIComponent(auth);
-    }
-
-    // the host is the remaining to the left of the first non-host char
-    hostEnd = -1;
-    for (var i = 0; i < nonHostChars.length; i++) {
-      var hec = rest.indexOf(nonHostChars[i]);
-      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) hostEnd = hec;
-    }
-    // if we still have not hit it, then the entire thing is a host.
-    if (hostEnd === -1) hostEnd = rest.length;
-
-    this.host = rest.slice(0, hostEnd);
-    rest = rest.slice(hostEnd);
-
-    // pull out port.
-    this.parseHost();
-
-    // we've indicated that there is a hostname,
-    // so even if it's empty, it has to be present.
-    this.hostname = this.hostname || '';
-
-    // if hostname begins with [ and ends with ]
-    // assume that it's an IPv6 address.
-    var ipv6Hostname = this.hostname[0] === '[' && this.hostname[this.hostname.length - 1] === ']';
-
-    // validate a little.
-    if (!ipv6Hostname) {
-      var hostparts = this.hostname.split(/\./);
-      for (var i = 0, l = hostparts.length; i < l; i++) {
-        var part = hostparts[i];
-        if (!part) continue;
-        if (!part.match(hostnamePartPattern)) {
-          var newpart = '';
-          for (var j = 0, k = part.length; j < k; j++) {
-            if (part.charCodeAt(j) > 127) {
-              // we replace non-ASCII char with a temporary placeholder
-              // we need this to make sure size of hostname is not
-              // broken by replacing non-ASCII by nothing
-              newpart += 'x';
-            } else {
-              newpart += part[j];
-            }
-          }
-          // we test again with ASCII char only
-          if (!newpart.match(hostnamePartPattern)) {
-            var validParts = hostparts.slice(0, i);
-            var notHost = hostparts.slice(i + 1);
-            var bit = part.match(hostnamePartStart);
-            if (bit) {
-              validParts.push(bit[1]);
-              notHost.unshift(bit[2]);
-            }
-            if (notHost.length) {
-              rest = '/' + notHost.join('.') + rest;
-            }
-            this.hostname = validParts.join('.');
-            break;
-          }
-        }
-      }
-    }
-
-    if (this.hostname.length > hostnameMaxLen) {
-      this.hostname = '';
-    } else {
-      // hostnames are always lower case.
-      this.hostname = this.hostname.toLowerCase();
-    }
-
-    if (!ipv6Hostname) {
-      // IDNA Support: Returns a punycoded representation of "domain".
-      // It only converts parts of the domain name that
-      // have non-ASCII characters, i.e. it doesn't matter if
-      // you call it with a domain that already is ASCII-only.
-      this.hostname = punycode.toASCII(this.hostname);
-    }
-
-    var p = this.port ? ':' + this.port : '';
-    var h = this.hostname || '';
-    this.host = h + p;
-    this.href += this.host;
-
-    // strip [ and ] from the hostname
-    // the host field still retains them, though
-    if (ipv6Hostname) {
-      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
-      if (rest[0] !== '/') {
-        rest = '/' + rest;
-      }
-    }
-  }
-
-  // now rest is set to the post-host stuff.
-  // chop off any delim chars.
-  if (!unsafeProtocol[lowerProto]) {
-
-    // First, make 100% sure that any "autoEscape" chars get
-    // escaped, even if encodeURIComponent doesn't think they
-    // need to be.
-    for (var i = 0, l = autoEscape.length; i < l; i++) {
-      var ae = autoEscape[i];
-      if (rest.indexOf(ae) === -1) continue;
-      var esc = encodeURIComponent(ae);
-      if (esc === ae) {
-        esc = escape(ae);
-      }
-      rest = rest.split(ae).join(esc);
-    }
-  }
-
-  // chop off from the tail first.
-  var hash = rest.indexOf('#');
-  if (hash !== -1) {
-    // got a fragment string.
-    this.hash = rest.substr(hash);
-    rest = rest.slice(0, hash);
-  }
-  var qm = rest.indexOf('?');
-  if (qm !== -1) {
-    this.search = rest.substr(qm);
-    this.query = rest.substr(qm + 1);
-    if (parseQueryString) {
-      this.query = querystring.parse(this.query);
-    }
-    rest = rest.slice(0, qm);
-  } else if (parseQueryString) {
-    // no query string, but parseQueryString still requested
-    this.search = '';
-    this.query = {};
-  }
-  if (rest) this.pathname = rest;
-  if (slashedProtocol[lowerProto] && this.hostname && !this.pathname) {
-    this.pathname = '/';
-  }
-
-  //to support http.request
-  if (this.pathname || this.search) {
-    var p = this.pathname || '';
-    var s = this.search || '';
-    this.path = p + s;
-  }
-
-  // finally, reconstruct the href based on what has been validated.
-  this.href = this.format();
-  return this;
-};
-
-// format a parsed object into a url string
-function urlFormat(obj) {
-  // ensure it's an object, and not a string url.
-  // If it's an obj, this is a no-op.
-  // this way, you can call url_format() on strings
-  // to clean up potentially wonky urls.
-  if (util.isString(obj)) obj = urlParse(obj);
-  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
-  return obj.format();
-}
-
-Url.prototype.format = function () {
-  var auth = this.auth || '';
-  if (auth) {
-    auth = encodeURIComponent(auth);
-    auth = auth.replace(/%3A/i, ':');
-    auth += '@';
-  }
-
-  var protocol = this.protocol || '',
-      pathname = this.pathname || '',
-      hash = this.hash || '',
-      host = false,
-      query = '';
-
-  if (this.host) {
-    host = auth + this.host;
-  } else if (this.hostname) {
-    host = auth + (this.hostname.indexOf(':') === -1 ? this.hostname : '[' + this.hostname + ']');
-    if (this.port) {
-      host += ':' + this.port;
-    }
-  }
-
-  if (this.query && util.isObject(this.query) && Object.keys(this.query).length) {
-    query = querystring.stringify(this.query);
-  }
-
-  var search = this.search || query && '?' + query || '';
-
-  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
-
-  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
-  // unless they had them to begin with.
-  if (this.slashes || (!protocol || slashedProtocol[protocol]) && host !== false) {
-    host = '//' + (host || '');
-    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
-  } else if (!host) {
-    host = '';
-  }
-
-  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
-  if (search && search.charAt(0) !== '?') search = '?' + search;
-
-  pathname = pathname.replace(/[?#]/g, function (match) {
-    return encodeURIComponent(match);
-  });
-  search = search.replace('#', '%23');
-
-  return protocol + host + pathname + search + hash;
-};
-
-function urlResolve(source, relative) {
-  return urlParse(source, false, true).resolve(relative);
-}
-
-Url.prototype.resolve = function (relative) {
-  return this.resolveObject(urlParse(relative, false, true)).format();
-};
-
-function urlResolveObject(source, relative) {
-  if (!source) return relative;
-  return urlParse(source, false, true).resolveObject(relative);
-}
-
-Url.prototype.resolveObject = function (relative) {
-  if (util.isString(relative)) {
-    var rel = new Url();
-    rel.parse(relative, false, true);
-    relative = rel;
-  }
-
-  var result = new Url();
-  var tkeys = Object.keys(this);
-  for (var tk = 0; tk < tkeys.length; tk++) {
-    var tkey = tkeys[tk];
-    result[tkey] = this[tkey];
-  }
-
-  // hash is always overridden, no matter what.
-  // even href="" will remove it.
-  result.hash = relative.hash;
-
-  // if the relative url is empty, then there's nothing left to do here.
-  if (relative.href === '') {
-    result.href = result.format();
-    return result;
-  }
-
-  // hrefs like //foo/bar always cut to the protocol.
-  if (relative.slashes && !relative.protocol) {
-    // take everything except the protocol from relative
-    var rkeys = Object.keys(relative);
-    for (var rk = 0; rk < rkeys.length; rk++) {
-      var rkey = rkeys[rk];
-      if (rkey !== 'protocol') result[rkey] = relative[rkey];
-    }
-
-    //urlParse appends trailing / to urls like http://www.example.com
-    if (slashedProtocol[result.protocol] && result.hostname && !result.pathname) {
-      result.path = result.pathname = '/';
-    }
-
-    result.href = result.format();
-    return result;
-  }
-
-  if (relative.protocol && relative.protocol !== result.protocol) {
-    // if it's a known url protocol, then changing
-    // the protocol does weird things
-    // first, if it's not file:, then we MUST have a host,
-    // and if there was a path
-    // to begin with, then we MUST have a path.
-    // if it is file:, then the host is dropped,
-    // because that's known to be hostless.
-    // anything else is assumed to be absolute.
-    if (!slashedProtocol[relative.protocol]) {
-      var keys = Object.keys(relative);
-      for (var v = 0; v < keys.length; v++) {
-        var k = keys[v];
-        result[k] = relative[k];
-      }
-      result.href = result.format();
-      return result;
-    }
-
-    result.protocol = relative.protocol;
-    if (!relative.host && !hostlessProtocol[relative.protocol]) {
-      var relPath = (relative.pathname || '').split('/');
-      while (relPath.length && !(relative.host = relPath.shift())) {}
-      if (!relative.host) relative.host = '';
-      if (!relative.hostname) relative.hostname = '';
-      if (relPath[0] !== '') relPath.unshift('');
-      if (relPath.length < 2) relPath.unshift('');
-      result.pathname = relPath.join('/');
-    } else {
-      result.pathname = relative.pathname;
-    }
-    result.search = relative.search;
-    result.query = relative.query;
-    result.host = relative.host || '';
-    result.auth = relative.auth;
-    result.hostname = relative.hostname || relative.host;
-    result.port = relative.port;
-    // to support http.request
-    if (result.pathname || result.search) {
-      var p = result.pathname || '';
-      var s = result.search || '';
-      result.path = p + s;
-    }
-    result.slashes = result.slashes || relative.slashes;
-    result.href = result.format();
-    return result;
-  }
-
-  var isSourceAbs = result.pathname && result.pathname.charAt(0) === '/',
-      isRelAbs = relative.host || relative.pathname && relative.pathname.charAt(0) === '/',
-      mustEndAbs = isRelAbs || isSourceAbs || result.host && relative.pathname,
-      removeAllDots = mustEndAbs,
-      srcPath = result.pathname && result.pathname.split('/') || [],
-      relPath = relative.pathname && relative.pathname.split('/') || [],
-      psychotic = result.protocol && !slashedProtocol[result.protocol];
-
-  // if the url is a non-slashed url, then relative
-  // links like ../.. should be able
-  // to crawl up to the hostname, as well.  This is strange.
-  // result.protocol has already been set by now.
-  // Later on, put the first path part into the host field.
-  if (psychotic) {
-    result.hostname = '';
-    result.port = null;
-    if (result.host) {
-      if (srcPath[0] === '') srcPath[0] = result.host;else srcPath.unshift(result.host);
-    }
-    result.host = '';
-    if (relative.protocol) {
-      relative.hostname = null;
-      relative.port = null;
-      if (relative.host) {
-        if (relPath[0] === '') relPath[0] = relative.host;else relPath.unshift(relative.host);
-      }
-      relative.host = null;
-    }
-    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
-  }
-
-  if (isRelAbs) {
-    // it's absolute.
-    result.host = relative.host || relative.host === '' ? relative.host : result.host;
-    result.hostname = relative.hostname || relative.hostname === '' ? relative.hostname : result.hostname;
-    result.search = relative.search;
-    result.query = relative.query;
-    srcPath = relPath;
-    // fall through to the dot-handling below.
-  } else if (relPath.length) {
-    // it's relative
-    // throw away the existing file, and take the new path instead.
-    if (!srcPath) srcPath = [];
-    srcPath.pop();
-    srcPath = srcPath.concat(relPath);
-    result.search = relative.search;
-    result.query = relative.query;
-  } else if (!util.isNullOrUndefined(relative.search)) {
-    // just pull out the search.
-    // like href='?foo'.
-    // Put this after the other two cases because it simplifies the booleans
-    if (psychotic) {
-      result.hostname = result.host = srcPath.shift();
-      //occationaly the auth can get stuck only in host
-      //this especially happens in cases like
-      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-      var authInHost = result.host && result.host.indexOf('@') > 0 ? result.host.split('@') : false;
-      if (authInHost) {
-        result.auth = authInHost.shift();
-        result.host = result.hostname = authInHost.shift();
-      }
-    }
-    result.search = relative.search;
-    result.query = relative.query;
-    //to support http.request
-    if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
-      result.path = (result.pathname ? result.pathname : '') + (result.search ? result.search : '');
-    }
-    result.href = result.format();
-    return result;
-  }
-
-  if (!srcPath.length) {
-    // no path at all.  easy.
-    // we've already handled the other stuff above.
-    result.pathname = null;
-    //to support http.request
-    if (result.search) {
-      result.path = '/' + result.search;
-    } else {
-      result.path = null;
-    }
-    result.href = result.format();
-    return result;
-  }
-
-  // if a url ENDs in . or .., then it must get a trailing slash.
-  // however, if it ends in anything else non-slashy,
-  // then it must NOT get a trailing slash.
-  var last = srcPath.slice(-1)[0];
-  var hasTrailingSlash = (result.host || relative.host || srcPath.length > 1) && (last === '.' || last === '..') || last === '';
-
-  // strip single dots, resolve double dots to parent dir
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = srcPath.length; i >= 0; i--) {
-    last = srcPath[i];
-    if (last === '.') {
-      srcPath.splice(i, 1);
-    } else if (last === '..') {
-      srcPath.splice(i, 1);
-      up++;
-    } else if (up) {
-      srcPath.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (!mustEndAbs && !removeAllDots) {
-    for (; up--; up) {
-      srcPath.unshift('..');
-    }
-  }
-
-  if (mustEndAbs && srcPath[0] !== '' && (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
-    srcPath.unshift('');
-  }
-
-  if (hasTrailingSlash && srcPath.join('/').substr(-1) !== '/') {
-    srcPath.push('');
-  }
-
-  var isAbsolute = srcPath[0] === '' || srcPath[0] && srcPath[0].charAt(0) === '/';
-
-  // put the host back
-  if (psychotic) {
-    result.hostname = result.host = isAbsolute ? '' : srcPath.length ? srcPath.shift() : '';
-    //occationaly the auth can get stuck only in host
-    //this especially happens in cases like
-    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-    var authInHost = result.host && result.host.indexOf('@') > 0 ? result.host.split('@') : false;
-    if (authInHost) {
-      result.auth = authInHost.shift();
-      result.host = result.hostname = authInHost.shift();
-    }
-  }
-
-  mustEndAbs = mustEndAbs || result.host && srcPath.length;
-
-  if (mustEndAbs && !isAbsolute) {
-    srcPath.unshift('');
-  }
-
-  if (!srcPath.length) {
-    result.pathname = null;
-    result.path = null;
-  } else {
-    result.pathname = srcPath.join('/');
-  }
-
-  //to support request.http
-  if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
-    result.path = (result.pathname ? result.pathname : '') + (result.search ? result.search : '');
-  }
-  result.auth = relative.auth || result.auth;
-  result.slashes = result.slashes || relative.slashes;
-  result.href = result.format();
-  return result;
-};
-
-Url.prototype.parseHost = function () {
-  var host = this.host;
-  var port = portPattern.exec(host);
-  if (port) {
-    port = port[0];
-    if (port !== ':') {
-      this.port = port.substr(1);
-    }
-    host = host.substr(0, host.length - port.length);
-  }
-  if (host) this.hostname = host;
-};
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (!process.version || process.version.indexOf('v0.') === 0 || process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
-  module.exports = nextTick;
-} else {
-  module.exports = process.nextTick;
-}
-
-function nextTick(fn, arg1, arg2, arg3) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('"callback" argument must be a function');
-  }
-  var len = arguments.length;
-  var args, i;
-  switch (len) {
-    case 0:
-    case 1:
-      return process.nextTick(fn);
-    case 2:
-      return process.nextTick(function afterTickOne() {
-        fn.call(null, arg1);
-      });
-    case 3:
-      return process.nextTick(function afterTickTwo() {
-        fn.call(null, arg1, arg2);
-      });
-    case 4:
-      return process.nextTick(function afterTickThree() {
-        fn.call(null, arg1, arg2, arg3);
-      });
-    default:
-      args = new Array(len - 1);
-      i = 0;
-      while (i < args.length) {
-        args[i++] = arguments[i];
-      }
-      return process.nextTick(function afterTick() {
-        fn.apply(null, args);
-      });
-  }
-}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-
-module.exports = simpleGet;
-
-var concat = __webpack_require__(44);
-var http = __webpack_require__(45);
-var https = __webpack_require__(72);
-var once = __webpack_require__(9);
-var querystring = __webpack_require__(39);
-var unzipResponse = __webpack_require__(132 // excluded from browser build
-);var url = __webpack_require__(22);
-
-function simpleGet(opts, cb) {
-  opts = typeof opts === 'string' ? { url: opts } : Object.assign({}, opts);
-  cb = once(cb);
-
-  if (opts.url) parseOptsUrl(opts);
-  if (opts.headers == null) opts.headers = {};
-  if (opts.maxRedirects == null) opts.maxRedirects = 10;
-
-  var body;
-  if (opts.form) body = typeof opts.form === 'string' ? opts.form : querystring.stringify(opts.form);
-  if (opts.body) body = opts.json ? JSON.stringify(opts.body) : opts.body;
-
-  if (opts.json) opts.headers.accept = 'application/json';
-  if (opts.json && body) opts.headers['content-type'] = 'application/json';
-  if (opts.form) opts.headers['content-type'] = 'application/x-www-form-urlencoded';
-  if (body && !isStream(body)) opts.headers['content-length'] = Buffer.byteLength(body);
-  delete opts.body;
-  delete opts.form;
-
-  if (body && !opts.method) opts.method = 'POST';
-  if (opts.method) opts.method = opts.method.toUpperCase
-
-  // Request gzip/deflate
-  ();var customAcceptEncoding = Object.keys(opts.headers).some(function (h) {
-    return h.toLowerCase() === 'accept-encoding';
-  });
-  if (!customAcceptEncoding) opts.headers['accept-encoding'] = 'gzip, deflate';
-
-  // Support http/https urls
-  var protocol = opts.protocol === 'https:' ? https : http;
-  var req = protocol.request(opts, function (res) {
-    // Follow 3xx redirects
-    if (res.statusCode >= 300 && res.statusCode < 400 && 'location' in res.headers) {
-      opts.url = res.headers.location;
-      res.resume // Discard response
-
-      ();if (opts.maxRedirects > 0) {
-        opts.maxRedirects -= 1;
-        simpleGet(opts, cb);
-      } else {
-        cb(new Error('too many redirects'));
-      }
-      return;
-    }
-
-    var tryUnzip = typeof unzipResponse === 'function' && opts.method !== 'HEAD';
-    cb(null, tryUnzip ? unzipResponse(res) : res);
-  });
-  req.on('timeout', function () {
-    req.abort();
-    cb(new Error('Request timed out'));
-  });
-  req.on('error', cb);
-
-  if (body && isStream(body)) body.on('error', cb).pipe(req);else req.end(body);
-
-  return req;
-}
-
-simpleGet.concat = function (opts, cb) {
-  return simpleGet(opts, function (err, res) {
-    if (err) return cb(err);
-    concat(res, function (err, data) {
-      if (err) return cb(err);
-      if (opts.json) {
-        try {
-          data = JSON.parse(data.toString());
-        } catch (err) {
-          return cb(err, res, data);
-        }
-      }
-      cb(null, res, data);
-    });
-  });
-};['get', 'post', 'put', 'patch', 'head', 'delete'].forEach(function (method) {
-  simpleGet[method] = function (opts, cb) {
-    if (typeof opts === 'string') opts = { url: opts };
-    opts.method = method.toUpperCase();
-    return simpleGet(opts, cb);
-  };
-});
-
-function parseOptsUrl(opts) {
-  var loc = url.parse(opts.url);
-  if (loc.hostname) opts.hostname = loc.hostname;
-  if (loc.port) opts.port = loc.port;
-  if (loc.protocol) opts.protocol = loc.protocol;
-  if (loc.auth) opts.auth = loc.auth;
-  opts.path = loc.path;
-  delete opts.url;
-}
-
-function isStream(obj) {
-  return typeof obj.pipe === 'function';
-}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-module.exports = Peer;
-
-var debug = __webpack_require__(5)('simple-peer');
-var getBrowserRTC = __webpack_require__(71);
-var inherits = __webpack_require__(1);
-var randombytes = __webpack_require__(13);
-var stream = __webpack_require__(3);
-
-var MAX_BUFFERED_AMOUNT = 64 * 1024;
-
-inherits(Peer, stream.Duplex
-
-/**
- * WebRTC peer connection. Same API as node core `net.Socket`, plus a few extra methods.
- * Duplex stream.
- * @param {Object} opts
- */
-);function Peer(opts) {
-  var self = this;
-  if (!(self instanceof Peer)) return new Peer(opts);
-
-  self._id = randombytes(4).toString('hex').slice(0, 7);
-  self._debug('new peer %o', opts);
-
-  opts = Object.assign({
-    allowHalfOpen: false
-  }, opts);
-
-  stream.Duplex.call(self, opts);
-
-  self.channelName = opts.initiator ? opts.channelName || randombytes(20).toString('hex') : null;
-
-  // Needed by _transformConstraints, so set this early
-  self._isChromium = typeof window !== 'undefined' && !!window.webkitRTCPeerConnection;
-
-  self.initiator = opts.initiator || false;
-  self.channelConfig = opts.channelConfig || Peer.channelConfig;
-  self.config = opts.config || Peer.config;
-  self.constraints = self._transformConstraints(opts.constraints || Peer.constraints);
-  self.offerConstraints = self._transformConstraints(opts.offerConstraints || {});
-  self.answerConstraints = self._transformConstraints(opts.answerConstraints || {});
-  self.reconnectTimer = opts.reconnectTimer || false;
-  self.sdpTransform = opts.sdpTransform || function (sdp) {
-    return sdp;
-  };
-  self.stream = opts.stream || false;
-  self.trickle = opts.trickle !== undefined ? opts.trickle : true;
-
-  self.destroyed = false;
-  self.connected = false;
-
-  self.remoteAddress = undefined;
-  self.remoteFamily = undefined;
-  self.remotePort = undefined;
-  self.localAddress = undefined;
-  self.localPort = undefined;
-
-  self._wrtc = opts.wrtc && _typeof(opts.wrtc) === 'object' ? opts.wrtc : getBrowserRTC();
-
-  if (!self._wrtc) {
-    if (typeof window === 'undefined') {
-      throw new Error('No WebRTC support: Specify `opts.wrtc` option in this environment');
-    } else {
-      throw new Error('No WebRTC support: Not a supported browser');
-    }
-  }
-
-  self._pcReady = false;
-  self._channelReady = false;
-  self._iceComplete = false; // ice candidate trickle done (got null candidate)
-  self._channel = null;
-  self._pendingCandidates = [];
-  self._previousStreams = [];
-
-  self._chunk = null;
-  self._cb = null;
-  self._interval = null;
-  self._reconnectTimeout = null;
-
-  self._pc = new self._wrtc.RTCPeerConnection(self.config, self.constraints);
-
-  // We prefer feature detection whenever possible, but sometimes that's not
-  // possible for certain implementations.
-  self._isWrtc = Array.isArray(self._pc.RTCIceConnectionStates);
-  self._isReactNativeWebrtc = typeof self._pc._peerConnectionId === 'number';
-
-  self._pc.oniceconnectionstatechange = function () {
-    self._onIceStateChange();
-  };
-  self._pc.onicegatheringstatechange = function () {
-    self._onIceStateChange();
-  };
-  self._pc.onsignalingstatechange = function () {
-    self._onSignalingStateChange();
-  };
-  self._pc.onicecandidate = function (event) {
-    self._onIceCandidate(event);
-  };
-
-  // Other spec events, unused by this implementation:
-  // - onconnectionstatechange
-  // - onicecandidateerror
-  // - onfingerprintfailure
-
-  if (self.initiator) {
-    var createdOffer = false;
-    self._pc.onnegotiationneeded = function () {
-      if (!createdOffer) self._createOffer();
-      createdOffer = true;
-    };
-
-    self._setupData({
-      channel: self._pc.createDataChannel(self.channelName, self.channelConfig)
-    });
-  } else {
-    self._pc.ondatachannel = function (event) {
-      self._setupData(event);
-    };
-  }
-
-  if ('addTrack' in self._pc) {
-    // WebRTC Spec, Firefox
-    if (self.stream) {
-      self.stream.getTracks().forEach(function (track) {
-        self._pc.addTrack(track, self.stream);
-      });
-    }
-    self._pc.ontrack = function (event) {
-      self._onTrack(event);
-    };
-  } else {
-    // Chrome, etc. This can be removed once all browsers support `ontrack`
-    if (self.stream) self._pc.addStream(self.stream);
-    self._pc.onaddstream = function (event) {
-      self._onAddStream(event);
-    };
-  }
-
-  // HACK: wrtc doesn't fire the 'negotionneeded' event
-  if (self.initiator && self._isWrtc) {
-    self._pc.onnegotiationneeded();
-  }
-
-  self._onFinishBound = function () {
-    self._onFinish();
-  };
-  self.once('finish', self._onFinishBound);
-}
-
-Peer.WEBRTC_SUPPORT = !!getBrowserRTC
-
-/**
- * Expose config, constraints, and data channel config for overriding all Peer
- * instances. Otherwise, just set opts.config, opts.constraints, or opts.channelConfig
- * when constructing a Peer.
- */
-();Peer.config = {
-  iceServers: [{
-    urls: 'stun:stun.l.google.com:19302'
-  }, {
-    urls: 'stun:global.stun.twilio.com:3478?transport=udp'
-  }]
-};
-Peer.constraints = {};
-Peer.channelConfig = {};
-
-Object.defineProperty(Peer.prototype, 'bufferSize', {
-  get: function get() {
-    var self = this;
-    return self._channel && self._channel.bufferedAmount || 0;
-  }
-});
-
-Peer.prototype.address = function () {
-  var self = this;
-  return { port: self.localPort, family: 'IPv4', address: self.localAddress };
-};
-
-Peer.prototype.signal = function (data) {
-  var self = this;
-  if (self.destroyed) throw new Error('cannot signal after peer is destroyed');
-  if (typeof data === 'string') {
-    try {
-      data = JSON.parse(data);
-    } catch (err) {
-      data = {};
-    }
-  }
-  self._debug('signal()');
-
-  if (data.candidate) {
-    if (self._pc.remoteDescription) self._addIceCandidate(data.candidate);else self._pendingCandidates.push(data.candidate);
-  }
-  if (data.sdp) {
-    self._pc.setRemoteDescription(new self._wrtc.RTCSessionDescription(data), function () {
-      if (self.destroyed) return;
-
-      self._pendingCandidates.forEach(function (candidate) {
-        self._addIceCandidate(candidate);
-      });
-      self._pendingCandidates = [];
-
-      if (self._pc.remoteDescription.type === 'offer') self._createAnswer();
-    }, function (err) {
-      self._destroy(err);
-    });
-  }
-  if (!data.sdp && !data.candidate) {
-    self._destroy(new Error('signal() called with invalid signal data'));
-  }
-};
-
-Peer.prototype._addIceCandidate = function (candidate) {
-  var self = this;
-  try {
-    self._pc.addIceCandidate(new self._wrtc.RTCIceCandidate(candidate), noop, function (err) {
-      self._destroy(err);
-    });
-  } catch (err) {
-    self._destroy(new Error('error adding candidate: ' + err.message));
-  }
-};
-
-/**
- * Send text/binary data to the remote peer.
- * @param {TypedArrayView|ArrayBuffer|Buffer|string|Blob|Object} chunk
- */
-Peer.prototype.send = function (chunk) {
-  var self = this;
-
-  // HACK: `wrtc` module crashes on Node.js Buffer, so convert to Uint8Array
-  // See: https://github.com/feross/simple-peer/issues/60
-  if (self._isWrtc && Buffer.isBuffer(chunk)) {
-    chunk = new Uint8Array(chunk);
-  }
-
-  self._channel.send(chunk);
-};
-
-Peer.prototype.destroy = function (onclose) {
-  var self = this;
-  self._destroy(null, onclose);
-};
-
-Peer.prototype._destroy = function (err, onclose) {
-  var self = this;
-  if (self.destroyed) return;
-  if (onclose) self.once('close', onclose);
-
-  self._debug('destroy (error: %s)', err && (err.message || err));
-
-  self.readable = self.writable = false;
-
-  if (!self._readableState.ended) self.push(null);
-  if (!self._writableState.finished) self.end();
-
-  self.destroyed = true;
-  self.connected = false;
-  self._pcReady = false;
-  self._channelReady = false;
-  self._previousStreams = null;
-
-  clearInterval(self._interval);
-  clearTimeout(self._reconnectTimeout);
-  self._interval = null;
-  self._reconnectTimeout = null;
-  self._chunk = null;
-  self._cb = null;
-
-  if (self._onFinishBound) self.removeListener('finish', self._onFinishBound);
-  self._onFinishBound = null;
-
-  if (self._pc) {
-    try {
-      self._pc.close();
-    } catch (err) {}
-
-    self._pc.oniceconnectionstatechange = null;
-    self._pc.onicegatheringstatechange = null;
-    self._pc.onsignalingstatechange = null;
-    self._pc.onicecandidate = null;
-    if ('addTrack' in self._pc) {
-      self._pc.ontrack = null;
-    } else {
-      self._pc.onaddstream = null;
-    }
-    self._pc.onnegotiationneeded = null;
-    self._pc.ondatachannel = null;
-  }
-
-  if (self._channel) {
-    try {
-      self._channel.close();
-    } catch (err) {}
-
-    self._channel.onmessage = null;
-    self._channel.onopen = null;
-    self._channel.onclose = null;
-    self._channel.onerror = null;
-  }
-  self._pc = null;
-  self._channel = null;
-
-  if (err) self.emit('error', err);
-  self.emit('close');
-};
-
-Peer.prototype._setupData = function (event) {
-  var self = this;
-  if (!event.channel) {
-    // In some situations `pc.createDataChannel()` returns `undefined` (in wrtc),
-    // which is invalid behavior. Handle it gracefully.
-    // See: https://github.com/feross/simple-peer/issues/163
-    return self._destroy(new Error('Data channel event is missing `channel` property'));
-  }
-
-  self._channel = event.channel;
-  self._channel.binaryType = 'arraybuffer';
-
-  if (typeof self._channel.bufferedAmountLowThreshold === 'number') {
-    self._channel.bufferedAmountLowThreshold = MAX_BUFFERED_AMOUNT;
-  }
-
-  self.channelName = self._channel.label;
-
-  self._channel.onmessage = function (event) {
-    self._onChannelMessage(event);
-  };
-  self._channel.onbufferedamountlow = function () {
-    self._onChannelBufferedAmountLow();
-  };
-  self._channel.onopen = function () {
-    self._onChannelOpen();
-  };
-  self._channel.onclose = function () {
-    self._onChannelClose();
-  };
-  self._channel.onerror = function (err) {
-    self._destroy(err);
-  };
-};
-
-Peer.prototype._read = function () {};
-
-Peer.prototype._write = function (chunk, encoding, cb) {
-  var self = this;
-  if (self.destroyed) return cb(new Error('cannot write after peer is destroyed'));
-
-  if (self.connected) {
-    try {
-      self.send(chunk);
-    } catch (err) {
-      return self._destroy(err);
-    }
-    if (self._channel.bufferedAmount > MAX_BUFFERED_AMOUNT) {
-      self._debug('start backpressure: bufferedAmount %d', self._channel.bufferedAmount);
-      self._cb = cb;
-    } else {
-      cb(null);
-    }
-  } else {
-    self._debug('write before connect');
-    self._chunk = chunk;
-    self._cb = cb;
-  }
-};
-
-// When stream finishes writing, close socket. Half open connections are not
-// supported.
-Peer.prototype._onFinish = function () {
-  var self = this;
-  if (self.destroyed) return;
-
-  if (self.connected) {
-    destroySoon();
-  } else {
-    self.once('connect', destroySoon);
-  }
-
-  // Wait a bit before destroying so the socket flushes.
-  // TODO: is there a more reliable way to accomplish this?
-  function destroySoon() {
-    setTimeout(function () {
-      self._destroy();
-    }, 1000);
-  }
-};
-
-Peer.prototype._createOffer = function () {
-  var self = this;
-  if (self.destroyed) return;
-
-  self._pc.createOffer(function (offer) {
-    if (self.destroyed) return;
-    offer.sdp = self.sdpTransform(offer.sdp);
-    self._pc.setLocalDescription(offer, onSuccess, onError);
-
-    function onSuccess() {
-      if (self.destroyed) return;
-      if (self.trickle || self._iceComplete) sendOffer();else self.once('_iceComplete', sendOffer // wait for candidates
-      );
-    }
-
-    function onError(err) {
-      self._destroy(err);
-    }
-
-    function sendOffer() {
-      var signal = self._pc.localDescription || offer;
-      self._debug('signal');
-      self.emit('signal', {
-        type: signal.type,
-        sdp: signal.sdp
-      });
-    }
-  }, function (err) {
-    self._destroy(err);
-  }, self.offerConstraints);
-};
-
-Peer.prototype._createAnswer = function () {
-  var self = this;
-  if (self.destroyed) return;
-
-  self._pc.createAnswer(function (answer) {
-    if (self.destroyed) return;
-    answer.sdp = self.sdpTransform(answer.sdp);
-    self._pc.setLocalDescription(answer, onSuccess, onError);
-
-    function onSuccess() {
-      if (self.destroyed) return;
-      if (self.trickle || self._iceComplete) sendAnswer();else self.once('_iceComplete', sendAnswer);
-    }
-
-    function onError(err) {
-      self._destroy(err);
-    }
-
-    function sendAnswer() {
-      var signal = self._pc.localDescription || answer;
-      self._debug('signal');
-      self.emit('signal', {
-        type: signal.type,
-        sdp: signal.sdp
-      });
-    }
-  }, function (err) {
-    self._destroy(err);
-  }, self.answerConstraints);
-};
-
-Peer.prototype._onIceStateChange = function () {
-  var self = this;
-  if (self.destroyed) return;
-  var iceConnectionState = self._pc.iceConnectionState;
-  var iceGatheringState = self._pc.iceGatheringState;
-
-  self._debug('iceStateChange (connection: %s) (gathering: %s)', iceConnectionState, iceGatheringState);
-  self.emit('iceStateChange', iceConnectionState, iceGatheringState);
-
-  if (iceConnectionState === 'connected' || iceConnectionState === 'completed') {
-    clearTimeout(self._reconnectTimeout);
-    self._pcReady = true;
-    self._maybeReady();
-  }
-  if (iceConnectionState === 'disconnected') {
-    if (self.reconnectTimer) {
-      // If user has set `opt.reconnectTimer`, allow time for ICE to attempt a reconnect
-      clearTimeout(self._reconnectTimeout);
-      self._reconnectTimeout = setTimeout(function () {
-        self._destroy();
-      }, self.reconnectTimer);
-    } else {
-      self._destroy();
-    }
-  }
-  if (iceConnectionState === 'failed') {
-    self._destroy(new Error('Ice connection failed.'));
-  }
-  if (iceConnectionState === 'closed') {
-    self._destroy();
-  }
-};
-
-Peer.prototype.getStats = function (cb) {
-  var self = this;
-
-  // Promise-based getStats() (standard)
-  if (self._pc.getStats.length === 0) {
-    self._pc.getStats().then(function (res) {
-      var reports = [];
-      res.forEach(function (report) {
-        reports.push(report);
-      });
-      cb(null, reports);
-    }, function (err) {
-      cb(err);
-    }
-
-    // Two-parameter callback-based getStats() (deprecated, former standard)
-    );
-  } else if (self._isReactNativeWebrtc) {
-    self._pc.getStats(null, function (res) {
-      var reports = [];
-      res.forEach(function (report) {
-        reports.push(report);
-      });
-      cb(null, reports);
-    }, function (err) {
-      cb(err);
-    }
-
-    // Single-parameter callback-based getStats() (non-standard)
-    );
-  } else if (self._pc.getStats.length > 0) {
-    self._pc.getStats(function (res) {
-      var reports = [];
-      res.result().forEach(function (result) {
-        var report = {};
-        result.names().forEach(function (name) {
-          report[name] = result.stat(name);
-        });
-        report.id = result.id;
-        report.type = result.type;
-        report.timestamp = result.timestamp;
-        reports.push(report);
-      });
-      cb(null, reports);
-    }, function (err) {
-      cb(err);
-    }
-
-    // Unknown browser, skip getStats() since it's anyone's guess which style of
-    // getStats() they implement.
-    );
-  } else {
-    cb(null, []);
-  }
-};
-
-Peer.prototype._maybeReady = function () {
-  var self = this;
-  self._debug('maybeReady pc %s channel %s', self._pcReady, self._channelReady);
-  if (self.connected || self._connecting || !self._pcReady || !self._channelReady) return;
-  self._connecting = true;
-
-  self.getStats(function (err, items) {
-    if (self.destroyed) return;
-
-    // Treat getStats error as non-fatal. It's not essential.
-    if (err) items = [];
-
-    self._connecting = false;
-    self.connected = true;
-
-    var remoteCandidates = {};
-    var localCandidates = {};
-    var candidatePairs = {};
-
-    items.forEach(function (item) {
-      // TODO: Once all browsers support the hyphenated stats report types, remove
-      // the non-hypenated ones
-      if (item.type === 'remotecandidate' || item.type === 'remote-candidate') {
-        remoteCandidates[item.id] = item;
-      }
-      if (item.type === 'localcandidate' || item.type === 'local-candidate') {
-        localCandidates[item.id] = item;
-      }
-      if (item.type === 'candidatepair' || item.type === 'candidate-pair') {
-        candidatePairs[item.id] = item;
-      }
-    });
-
-    items.forEach(function (item) {
-      // Spec-compliant
-      if (item.type === 'transport') {
-        setSelectedCandidatePair(candidatePairs[item.selectedCandidatePairId]);
-      }
-
-      // Old implementations
-      if (item.type === 'googCandidatePair' && item.googActiveConnection === 'true' || (item.type === 'candidatepair' || item.type === 'candidate-pair') && item.selected) {
-        setSelectedCandidatePair(item);
-      }
-    });
-
-    function setSelectedCandidatePair(selectedCandidatePair) {
-      var local = localCandidates[selectedCandidatePair.localCandidateId];
-
-      if (local && local.ip) {
-        // Spec
-        self.localAddress = local.ip;
-        self.localPort = Number(local.port);
-      } else if (local && local.ipAddress) {
-        // Firefox
-        self.localAddress = local.ipAddress;
-        self.localPort = Number(local.portNumber);
-      } else if (typeof selectedCandidatePair.googLocalAddress === 'string') {
-        // TODO: remove this once Chrome 58 is released
-        local = selectedCandidatePair.googLocalAddress.split(':');
-        self.localAddress = local[0];
-        self.localPort = Number(local[1]);
-      }
-
-      var remote = remoteCandidates[selectedCandidatePair.remoteCandidateId];
-
-      if (remote && remote.ip) {
-        // Spec
-        self.remoteAddress = remote.ip;
-        self.remotePort = Number(remote.port);
-      } else if (remote && remote.ipAddress) {
-        // Firefox
-        self.remoteAddress = remote.ipAddress;
-        self.remotePort = Number(remote.portNumber);
-      } else if (typeof selectedCandidatePair.googRemoteAddress === 'string') {
-        // TODO: remove this once Chrome 58 is released
-        remote = selectedCandidatePair.googRemoteAddress.split(':');
-        self.remoteAddress = remote[0];
-        self.remotePort = Number(remote[1]);
-      }
-      self.remoteFamily = 'IPv4';
-
-      self._debug('connect local: %s:%s remote: %s:%s', self.localAddress, self.localPort, self.remoteAddress, self.remotePort);
-    }
-
-    if (self._chunk) {
-      try {
-        self.send(self._chunk);
-      } catch (err) {
-        return self._destroy(err);
-      }
-      self._chunk = null;
-      self._debug('sent chunk from "write before connect"');
-
-      var cb = self._cb;
-      self._cb = null;
-      cb(null);
-    }
-
-    // If `bufferedAmountLowThreshold` and 'onbufferedamountlow' are unsupported,
-    // fallback to using setInterval to implement backpressure.
-    if (typeof self._channel.bufferedAmountLowThreshold !== 'number') {
-      self._interval = setInterval(function () {
-        self._onInterval();
-      }, 150);
-      if (self._interval.unref) self._interval.unref();
-    }
-
-    self._debug('connect');
-    self.emit('connect');
-  });
-};
-
-Peer.prototype._onInterval = function () {
-  if (!this._cb || !this._channel || this._channel.bufferedAmount > MAX_BUFFERED_AMOUNT) {
-    return;
-  }
-  this._onChannelBufferedAmountLow();
-};
-
-Peer.prototype._onSignalingStateChange = function () {
-  var self = this;
-  if (self.destroyed) return;
-  self._debug('signalingStateChange %s', self._pc.signalingState);
-  self.emit('signalingStateChange', self._pc.signalingState);
-};
-
-Peer.prototype._onIceCandidate = function (event) {
-  var self = this;
-  if (self.destroyed) return;
-  if (event.candidate && self.trickle) {
-    self.emit('signal', {
-      candidate: {
-        candidate: event.candidate.candidate,
-        sdpMLineIndex: event.candidate.sdpMLineIndex,
-        sdpMid: event.candidate.sdpMid
-      }
-    });
-  } else if (!event.candidate) {
-    self._iceComplete = true;
-    self.emit('_iceComplete');
-  }
-};
-
-Peer.prototype._onChannelMessage = function (event) {
-  var self = this;
-  if (self.destroyed) return;
-  var data = event.data;
-  if (data instanceof ArrayBuffer) data = Buffer.from(data);
-  self.push(data);
-};
-
-Peer.prototype._onChannelBufferedAmountLow = function () {
-  var self = this;
-  if (self.destroyed || !self._cb) return;
-  self._debug('ending backpressure: bufferedAmount %d', self._channel.bufferedAmount);
-  var cb = self._cb;
-  self._cb = null;
-  cb(null);
-};
-
-Peer.prototype._onChannelOpen = function () {
-  var self = this;
-  if (self.connected || self.destroyed) return;
-  self._debug('on channel open');
-  self._channelReady = true;
-  self._maybeReady();
-};
-
-Peer.prototype._onChannelClose = function () {
-  var self = this;
-  if (self.destroyed) return;
-  self._debug('on channel close');
-  self._destroy();
-};
-
-Peer.prototype._onAddStream = function (event) {
-  var self = this;
-  if (self.destroyed) return;
-  self._debug('on add stream');
-  self.emit('stream', event.stream);
-};
-
-Peer.prototype._onTrack = function (event) {
-  var self = this;
-  if (self.destroyed) return;
-  self._debug('on track');
-  var id = event.streams[0].id;
-  if (self._previousStreams.indexOf(id) !== -1) return; // Only fire one 'stream' event, even though there may be multiple tracks per stream
-  self._previousStreams.push(id);
-  self.emit('stream', event.streams[0]);
-};
-
-Peer.prototype._debug = function () {
-  var self = this;
-  var args = [].slice.call(arguments);
-  args[0] = '[' + self._id + '] ' + args[0];
-  debug.apply(null, args);
-};
-
-// Transform constraints objects into the new format (unless Chromium)
-// TODO: This can be removed when Chromium supports the new format
-Peer.prototype._transformConstraints = function (constraints) {
-  var self = this;
-
-  if (Object.keys(constraints).length === 0) {
-    return constraints;
-  }
-
-  if ((constraints.mandatory || constraints.optional) && !self._isChromium) {
-    // convert to new format
-
-    // Merge mandatory and optional objects, prioritizing mandatory
-    var newConstraints = Object.assign({}, constraints.optional, constraints.mandatory
-
-    // fix casing
-    );if (newConstraints.OfferToReceiveVideo !== undefined) {
-      newConstraints.offerToReceiveVideo = newConstraints.OfferToReceiveVideo;
-      delete newConstraints['OfferToReceiveVideo'];
-    }
-
-    if (newConstraints.OfferToReceiveAudio !== undefined) {
-      newConstraints.offerToReceiveAudio = newConstraints.OfferToReceiveAudio;
-      delete newConstraints['OfferToReceiveAudio'];
-    }
-
-    return newConstraints;
-  } else if (!constraints.mandatory && !constraints.optional && self._isChromium) {
-    // convert to old format
-
-    // fix casing
-    if (constraints.offerToReceiveVideo !== undefined) {
-      constraints.OfferToReceiveVideo = constraints.offerToReceiveVideo;
-      delete constraints['offerToReceiveVideo'];
-    }
-
-    if (constraints.offerToReceiveAudio !== undefined) {
-      constraints.OfferToReceiveAudio = constraints.offerToReceiveAudio;
-      delete constraints['offerToReceiveAudio'];
-    }
-
-    return {
-      mandatory: constraints // NOTE: All constraints are upgraded to mandatory
-    };
-  }
-
-  return constraints;
-};
-
-function noop() {}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var tick = 1;
-var maxTick = 65535;
-var resolution = 4;
-var inc = function inc() {
-  tick = tick + 1 & maxTick;
-};
-
-var timer = setInterval(inc, 1000 / resolution | 0);
-if (timer.unref) timer.unref();
-
-module.exports = function (seconds) {
-  var size = resolution * (seconds || 5);
-  var buffer = [0];
-  var pointer = 1;
-  var last = tick - 1 & maxTick;
-
-  return function (delta) {
-    var dist = tick - last & maxTick;
-    if (dist > size) dist = size;
-    last = tick;
-
-    while (dist--) {
-      if (pointer === size) pointer = 0;
-      buffer[pointer] = buffer[pointer === 0 ? size - 1 : pointer - 1];
-      pointer++;
-    }
-
-    if (delta) buffer[pointer - 1] += delta;
-
-    var top = buffer[pointer - 1];
-    var btm = buffer.length < size ? 0 : buffer[pointer === size ? 0 : pointer];
-
-    return buffer.length < resolution ? top : (top - btm) * resolution / buffer.length;
-  };
-};
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-module.exports = {
-	"_args": [
-		[
-			"webtorrent@^0.98.18",
-			"E:\\Repositorys\\peerCam"
-		]
-	],
-	"_from": "webtorrent@>=0.98.18 <0.99.0",
-	"_id": "webtorrent@0.98.18",
-	"_inCache": true,
-	"_installable": true,
-	"_location": "/webtorrent",
-	"_nodeVersion": "7.8.0",
-	"_npmOperationalInternal": {
-		"host": "packages-18-east.internal.npmjs.com",
-		"tmp": "tmp/webtorrent-0.98.18.tgz_1492206160560_0.39563035732135177"
-	},
-	"_npmUser": {
-		"email": "feross@feross.org",
-		"name": "feross"
-	},
-	"_npmVersion": "4.5.0",
-	"_phantomChildren": {},
-	"_requested": {
-		"name": "webtorrent",
-		"raw": "webtorrent@^0.98.18",
-		"rawSpec": "^0.98.18",
-		"scope": null,
-		"spec": ">=0.98.18 <0.99.0",
-		"type": "range"
-	},
-	"_requiredBy": [
-		"/"
-	],
-	"_resolved": "https://registry.npmjs.org/webtorrent/-/webtorrent-0.98.18.tgz",
-	"_shasum": "d8e0e04a52af884e9cffa361cbe8c159a4cb6f98",
-	"_shrinkwrap": null,
-	"_spec": "webtorrent@^0.98.18",
-	"_where": "E:\\Repositorys\\peerCam",
-	"author": {
-		"email": "feross@webtorrent.io",
-		"name": "WebTorrent, LLC",
-		"url": "https://webtorrent.io"
-	},
-	"browser": {
-		"./lib/server.js": false,
-		"./lib/tcp-pool.js": false,
-		"bittorrent-dht/client": false,
-		"fs-chunk-store": "memory-chunk-store",
-		"load-ip-set": false,
-		"net": false,
-		"os": false,
-		"ut_pex": false
-	},
-	"browserify": {
-		"transform": [
-			"package-json-versionify"
-		]
-	},
-	"bugs": {
-		"url": "https://github.com/webtorrent/webtorrent/issues"
-	},
-	"dependencies": {
-		"addr-to-ip-port": "^1.4.2",
-		"bitfield": "^1.1.2",
-		"bittorrent-dht": "^7.2.2",
-		"bittorrent-protocol": "^2.1.5",
-		"chunk-store-stream": "^2.0.2",
-		"create-torrent": "^3.24.5",
-		"debug": "^2.2.0",
-		"end-of-stream": "^1.1.0",
-		"fs-chunk-store": "^1.6.2",
-		"immediate-chunk-store": "^1.0.8",
-		"inherits": "^2.0.1",
-		"load-ip-set": "^1.2.7",
-		"memory-chunk-store": "^1.2.0",
-		"mime": "^1.3.4",
-		"multistream": "^2.0.5",
-		"package-json-versionify": "^1.0.2",
-		"parse-torrent": "^5.8.0",
-		"pump": "^1.0.1",
-		"random-iterate": "^1.0.1",
-		"randombytes": "^2.0.3",
-		"range-parser": "^1.2.0",
-		"readable-stream": "^2.1.4",
-		"render-media": "^2.8.0",
-		"run-parallel": "^1.1.6",
-		"run-parallel-limit": "^1.0.3",
-		"safe-buffer": "^5.0.1",
-		"simple-concat": "^1.0.0",
-		"simple-get": "^2.2.1",
-		"simple-peer": "^8.0.0",
-		"simple-sha1": "^2.0.8",
-		"speedometer": "^1.0.0",
-		"stream-to-blob": "^1.0.0",
-		"stream-to-blob-url": "^2.1.0",
-		"stream-with-known-length-to-buffer": "^1.0.0",
-		"torrent-discovery": "^8.1.0",
-		"torrent-piece": "^1.1.0",
-		"uniq": "^1.0.1",
-		"unordered-array-remove": "^1.0.2",
-		"ut_metadata": "^3.0.8",
-		"ut_pex": "^1.1.1",
-		"xtend": "^4.0.1",
-		"zero-fill": "^2.2.3"
-	},
-	"description": "Streaming torrent client",
-	"devDependencies": {
-		"bittorrent-tracker": "^9.0.0",
-		"brfs": "^1.4.3",
-		"browserify": "^14.0.0",
-		"cross-spawn": "^5.0.1",
-		"electron-prebuilt": "^0.37.8",
-		"finalhandler": "^1.0.0",
-		"network-address": "^1.1.0",
-		"run-series": "^1.1.4",
-		"serve-static": "^1.11.1",
-		"standard": "*",
-		"tape": "^4.6.0",
-		"uglify-js": "^2.7.0",
-		"webtorrent-fixtures": "^1.5.0",
-		"zuul": "^3.10.1"
-	},
-	"directories": {},
-	"dist": {
-		"shasum": "d8e0e04a52af884e9cffa361cbe8c159a4cb6f98",
-		"tarball": "https://registry.npmjs.org/webtorrent/-/webtorrent-0.98.18.tgz"
-	},
-	"engines": {
-		"node": ">=4"
-	},
-	"gitHead": "eb7ef40d80ebf7fa29188efe0580f2b0c5f3c95c",
-	"homepage": "https://webtorrent.io",
-	"keywords": [
-		"bittorrent",
-		"bittorrent client",
-		"download",
-		"mad science",
-		"p2p",
-		"peer-to-peer",
-		"peers",
-		"streaming",
-		"swarm",
-		"torrent",
-		"web torrent",
-		"webrtc",
-		"webrtc data",
-		"webtorrent"
-	],
-	"license": "MIT",
-	"main": "index.js",
-	"maintainers": [
-		{
-			"email": "feross@feross.org",
-			"name": "feross"
-		}
-	],
-	"name": "webtorrent",
-	"optionalDependencies": {},
-	"readme": "ERROR: No README data found!",
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/webtorrent/webtorrent.git"
-	},
-	"scripts": {
-		"build": "browserify -s WebTorrent -e ./ | uglifyjs -c warnings=false -m > webtorrent.min.js",
-		"build-debug": "browserify -s WebTorrent -e ./ > webtorrent.debug.js",
-		"size": "npm run build && cat webtorrent.min.js | gzip | wc -c",
-		"test": "standard && node ./bin/test.js",
-		"test-browser": "zuul -- test/*.js test/browser/*.js",
-		"test-browser-headless": "zuul --electron -- test/*.js test/browser/*.js",
-		"test-browser-local": "zuul --local -- test/*.js test/browser/*.js",
-		"test-node": "tape test/*.js test/node/*.js",
-		"update-authors": "./bin/update-authors.sh"
-	},
-	"version": "0.98.18"
-};
-
-/***/ }),
-/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7864,6 +5847,2023 @@ if (true) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var buffer = __webpack_require__(0);
+var Buffer = buffer.Buffer;
+var SlowBuffer = buffer.SlowBuffer;
+var MAX_LEN = buffer.kMaxLength || 2147483647;
+exports.alloc = function alloc(size, fill, encoding) {
+  if (typeof Buffer.alloc === 'function') {
+    return Buffer.alloc(size, fill, encoding);
+  }
+  if (typeof encoding === 'number') {
+    throw new TypeError('encoding must not be number');
+  }
+  if (typeof size !== 'number') {
+    throw new TypeError('size must be a number');
+  }
+  if (size > MAX_LEN) {
+    throw new RangeError('size is too large');
+  }
+  var enc = encoding;
+  var _fill = fill;
+  if (_fill === undefined) {
+    enc = undefined;
+    _fill = 0;
+  }
+  var buf = new Buffer(size);
+  if (typeof _fill === 'string') {
+    var fillBuf = new Buffer(_fill, enc);
+    var flen = fillBuf.length;
+    var i = -1;
+    while (++i < size) {
+      buf[i] = fillBuf[i % flen];
+    }
+  } else {
+    buf.fill(_fill);
+  }
+  return buf;
+};
+exports.allocUnsafe = function allocUnsafe(size) {
+  if (typeof Buffer.allocUnsafe === 'function') {
+    return Buffer.allocUnsafe(size);
+  }
+  if (typeof size !== 'number') {
+    throw new TypeError('size must be a number');
+  }
+  if (size > MAX_LEN) {
+    throw new RangeError('size is too large');
+  }
+  return new Buffer(size);
+};
+exports.from = function from(value, encodingOrOffset, length) {
+  if (typeof Buffer.from === 'function' && (!global.Uint8Array || Uint8Array.from !== Buffer.from)) {
+    return Buffer.from(value, encodingOrOffset, length);
+  }
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number');
+  }
+  if (typeof value === 'string') {
+    return new Buffer(value, encodingOrOffset);
+  }
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    var offset = encodingOrOffset;
+    if (arguments.length === 1) {
+      return new Buffer(value);
+    }
+    if (typeof offset === 'undefined') {
+      offset = 0;
+    }
+    var len = length;
+    if (typeof len === 'undefined') {
+      len = value.byteLength - offset;
+    }
+    if (offset >= value.byteLength) {
+      throw new RangeError('\'offset\' is out of bounds');
+    }
+    if (len > value.byteLength - offset) {
+      throw new RangeError('\'length\' is out of bounds');
+    }
+    return new Buffer(value.slice(offset, offset + len));
+  }
+  if (Buffer.isBuffer(value)) {
+    var out = new Buffer(value.length);
+    value.copy(out, 0, 0, value.length);
+    return out;
+  }
+  if (value) {
+    if (Array.isArray(value) || typeof ArrayBuffer !== 'undefined' && value.buffer instanceof ArrayBuffer || 'length' in value) {
+      return new Buffer(value);
+    }
+    if (value.type === 'Buffer' && Array.isArray(value.data)) {
+      return new Buffer(value.data);
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ' + 'ArrayBuffer, Array, or array-like object.');
+};
+exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
+  if (typeof Buffer.allocUnsafeSlow === 'function') {
+    return Buffer.allocUnsafeSlow(size);
+  }
+  if (typeof size !== 'number') {
+    throw new TypeError('size must be a number');
+  }
+  if (size >= MAX_LEN) {
+    throw new RangeError('size is too large');
+  }
+  return new SlowBuffer(size);
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var punycode = __webpack_require__(93);
+var util = __webpack_require__(90);
+
+exports.parse = urlParse;
+exports.resolve = urlResolve;
+exports.resolveObject = urlResolveObject;
+exports.format = urlFormat;
+
+exports.Url = Url;
+
+function Url() {
+  this.protocol = null;
+  this.slashes = null;
+  this.auth = null;
+  this.host = null;
+  this.port = null;
+  this.hostname = null;
+  this.hash = null;
+  this.search = null;
+  this.query = null;
+  this.pathname = null;
+  this.path = null;
+  this.href = null;
+}
+
+// Reference: RFC 3986, RFC 1808, RFC 2396
+
+// define these here so at least they only have to be
+// compiled once on the first module load.
+var protocolPattern = /^([a-z0-9.+-]+:)/i,
+    portPattern = /:[0-9]*$/,
+
+
+// Special case for a simple path URL
+simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/,
+
+
+// RFC 2396: characters reserved for delimiting URLs.
+// We actually just auto-escape these.
+delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
+
+// RFC 2396: characters not allowed for various reasons.
+unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+
+
+// Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+autoEscape = ['\''].concat(unwise),
+
+// Characters that are never ever allowed in a hostname.
+// Note that any invalid chars are also handled, but these
+// are the ones that are *expected* to be seen, so we fast-path
+// them.
+nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+    hostEndingChars = ['/', '?', '#'],
+    hostnameMaxLen = 255,
+    hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/,
+    hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/,
+
+// protocols that can allow "unsafe" and "unwise" chars.
+unsafeProtocol = {
+  'javascript': true,
+  'javascript:': true
+},
+
+// protocols that never have a hostname.
+hostlessProtocol = {
+  'javascript': true,
+  'javascript:': true
+},
+
+// protocols that always contain a // bit.
+slashedProtocol = {
+  'http': true,
+  'https': true,
+  'ftp': true,
+  'gopher': true,
+  'file': true,
+  'http:': true,
+  'https:': true,
+  'ftp:': true,
+  'gopher:': true,
+  'file:': true
+},
+    querystring = __webpack_require__(39);
+
+function urlParse(url, parseQueryString, slashesDenoteHost) {
+  if (url && util.isObject(url) && url instanceof Url) return url;
+
+  var u = new Url();
+  u.parse(url, parseQueryString, slashesDenoteHost);
+  return u;
+}
+
+Url.prototype.parse = function (url, parseQueryString, slashesDenoteHost) {
+  if (!util.isString(url)) {
+    throw new TypeError("Parameter 'url' must be a string, not " + (typeof url === 'undefined' ? 'undefined' : _typeof(url)));
+  }
+
+  // Copy chrome, IE, opera backslash-handling behavior.
+  // Back slashes before the query string get converted to forward slashes
+  // See: https://code.google.com/p/chromium/issues/detail?id=25916
+  var queryIndex = url.indexOf('?'),
+      splitter = queryIndex !== -1 && queryIndex < url.indexOf('#') ? '?' : '#',
+      uSplit = url.split(splitter),
+      slashRegex = /\\/g;
+  uSplit[0] = uSplit[0].replace(slashRegex, '/');
+  url = uSplit.join(splitter);
+
+  var rest = url;
+
+  // trim before proceeding.
+  // This is to support parse stuff like "  http://foo.com  \n"
+  rest = rest.trim();
+
+  if (!slashesDenoteHost && url.split('#').length === 1) {
+    // Try fast path regexp
+    var simplePath = simplePathPattern.exec(rest);
+    if (simplePath) {
+      this.path = rest;
+      this.href = rest;
+      this.pathname = simplePath[1];
+      if (simplePath[2]) {
+        this.search = simplePath[2];
+        if (parseQueryString) {
+          this.query = querystring.parse(this.search.substr(1));
+        } else {
+          this.query = this.search.substr(1);
+        }
+      } else if (parseQueryString) {
+        this.search = '';
+        this.query = {};
+      }
+      return this;
+    }
+  }
+
+  var proto = protocolPattern.exec(rest);
+  if (proto) {
+    proto = proto[0];
+    var lowerProto = proto.toLowerCase();
+    this.protocol = lowerProto;
+    rest = rest.substr(proto.length);
+  }
+
+  // figure out if it's got a host
+  // user@server is *always* interpreted as a hostname, and url
+  // resolution will treat //foo/bar as host=foo,path=bar because that's
+  // how the browser resolves relative URLs.
+  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+    var slashes = rest.substr(0, 2) === '//';
+    if (slashes && !(proto && hostlessProtocol[proto])) {
+      rest = rest.substr(2);
+      this.slashes = true;
+    }
+  }
+
+  if (!hostlessProtocol[proto] && (slashes || proto && !slashedProtocol[proto])) {
+
+    // there's a hostname.
+    // the first instance of /, ?, ;, or # ends the host.
+    //
+    // If there is an @ in the hostname, then non-host chars *are* allowed
+    // to the left of the last @ sign, unless some host-ending character
+    // comes *before* the @-sign.
+    // URLs are obnoxious.
+    //
+    // ex:
+    // http://a@b@c/ => user:a@b host:c
+    // http://a@b?@c => user:a host:c path:/?@c
+
+    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+    // Review our test case against browsers more comprehensively.
+
+    // find the first instance of any hostEndingChars
+    var hostEnd = -1;
+    for (var i = 0; i < hostEndingChars.length; i++) {
+      var hec = rest.indexOf(hostEndingChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) hostEnd = hec;
+    }
+
+    // at this point, either we have an explicit point where the
+    // auth portion cannot go past, or the last @ char is the decider.
+    var auth, atSign;
+    if (hostEnd === -1) {
+      // atSign can be anywhere.
+      atSign = rest.lastIndexOf('@');
+    } else {
+      // atSign must be in auth portion.
+      // http://a@b/c@d => host:b auth:a path:/c@d
+      atSign = rest.lastIndexOf('@', hostEnd);
+    }
+
+    // Now we have a portion which is definitely the auth.
+    // Pull that off.
+    if (atSign !== -1) {
+      auth = rest.slice(0, atSign);
+      rest = rest.slice(atSign + 1);
+      this.auth = decodeURIComponent(auth);
+    }
+
+    // the host is the remaining to the left of the first non-host char
+    hostEnd = -1;
+    for (var i = 0; i < nonHostChars.length; i++) {
+      var hec = rest.indexOf(nonHostChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) hostEnd = hec;
+    }
+    // if we still have not hit it, then the entire thing is a host.
+    if (hostEnd === -1) hostEnd = rest.length;
+
+    this.host = rest.slice(0, hostEnd);
+    rest = rest.slice(hostEnd);
+
+    // pull out port.
+    this.parseHost();
+
+    // we've indicated that there is a hostname,
+    // so even if it's empty, it has to be present.
+    this.hostname = this.hostname || '';
+
+    // if hostname begins with [ and ends with ]
+    // assume that it's an IPv6 address.
+    var ipv6Hostname = this.hostname[0] === '[' && this.hostname[this.hostname.length - 1] === ']';
+
+    // validate a little.
+    if (!ipv6Hostname) {
+      var hostparts = this.hostname.split(/\./);
+      for (var i = 0, l = hostparts.length; i < l; i++) {
+        var part = hostparts[i];
+        if (!part) continue;
+        if (!part.match(hostnamePartPattern)) {
+          var newpart = '';
+          for (var j = 0, k = part.length; j < k; j++) {
+            if (part.charCodeAt(j) > 127) {
+              // we replace non-ASCII char with a temporary placeholder
+              // we need this to make sure size of hostname is not
+              // broken by replacing non-ASCII by nothing
+              newpart += 'x';
+            } else {
+              newpart += part[j];
+            }
+          }
+          // we test again with ASCII char only
+          if (!newpart.match(hostnamePartPattern)) {
+            var validParts = hostparts.slice(0, i);
+            var notHost = hostparts.slice(i + 1);
+            var bit = part.match(hostnamePartStart);
+            if (bit) {
+              validParts.push(bit[1]);
+              notHost.unshift(bit[2]);
+            }
+            if (notHost.length) {
+              rest = '/' + notHost.join('.') + rest;
+            }
+            this.hostname = validParts.join('.');
+            break;
+          }
+        }
+      }
+    }
+
+    if (this.hostname.length > hostnameMaxLen) {
+      this.hostname = '';
+    } else {
+      // hostnames are always lower case.
+      this.hostname = this.hostname.toLowerCase();
+    }
+
+    if (!ipv6Hostname) {
+      // IDNA Support: Returns a punycoded representation of "domain".
+      // It only converts parts of the domain name that
+      // have non-ASCII characters, i.e. it doesn't matter if
+      // you call it with a domain that already is ASCII-only.
+      this.hostname = punycode.toASCII(this.hostname);
+    }
+
+    var p = this.port ? ':' + this.port : '';
+    var h = this.hostname || '';
+    this.host = h + p;
+    this.href += this.host;
+
+    // strip [ and ] from the hostname
+    // the host field still retains them, though
+    if (ipv6Hostname) {
+      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
+      if (rest[0] !== '/') {
+        rest = '/' + rest;
+      }
+    }
+  }
+
+  // now rest is set to the post-host stuff.
+  // chop off any delim chars.
+  if (!unsafeProtocol[lowerProto]) {
+
+    // First, make 100% sure that any "autoEscape" chars get
+    // escaped, even if encodeURIComponent doesn't think they
+    // need to be.
+    for (var i = 0, l = autoEscape.length; i < l; i++) {
+      var ae = autoEscape[i];
+      if (rest.indexOf(ae) === -1) continue;
+      var esc = encodeURIComponent(ae);
+      if (esc === ae) {
+        esc = escape(ae);
+      }
+      rest = rest.split(ae).join(esc);
+    }
+  }
+
+  // chop off from the tail first.
+  var hash = rest.indexOf('#');
+  if (hash !== -1) {
+    // got a fragment string.
+    this.hash = rest.substr(hash);
+    rest = rest.slice(0, hash);
+  }
+  var qm = rest.indexOf('?');
+  if (qm !== -1) {
+    this.search = rest.substr(qm);
+    this.query = rest.substr(qm + 1);
+    if (parseQueryString) {
+      this.query = querystring.parse(this.query);
+    }
+    rest = rest.slice(0, qm);
+  } else if (parseQueryString) {
+    // no query string, but parseQueryString still requested
+    this.search = '';
+    this.query = {};
+  }
+  if (rest) this.pathname = rest;
+  if (slashedProtocol[lowerProto] && this.hostname && !this.pathname) {
+    this.pathname = '/';
+  }
+
+  //to support http.request
+  if (this.pathname || this.search) {
+    var p = this.pathname || '';
+    var s = this.search || '';
+    this.path = p + s;
+  }
+
+  // finally, reconstruct the href based on what has been validated.
+  this.href = this.format();
+  return this;
+};
+
+// format a parsed object into a url string
+function urlFormat(obj) {
+  // ensure it's an object, and not a string url.
+  // If it's an obj, this is a no-op.
+  // this way, you can call url_format() on strings
+  // to clean up potentially wonky urls.
+  if (util.isString(obj)) obj = urlParse(obj);
+  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
+  return obj.format();
+}
+
+Url.prototype.format = function () {
+  var auth = this.auth || '';
+  if (auth) {
+    auth = encodeURIComponent(auth);
+    auth = auth.replace(/%3A/i, ':');
+    auth += '@';
+  }
+
+  var protocol = this.protocol || '',
+      pathname = this.pathname || '',
+      hash = this.hash || '',
+      host = false,
+      query = '';
+
+  if (this.host) {
+    host = auth + this.host;
+  } else if (this.hostname) {
+    host = auth + (this.hostname.indexOf(':') === -1 ? this.hostname : '[' + this.hostname + ']');
+    if (this.port) {
+      host += ':' + this.port;
+    }
+  }
+
+  if (this.query && util.isObject(this.query) && Object.keys(this.query).length) {
+    query = querystring.stringify(this.query);
+  }
+
+  var search = this.search || query && '?' + query || '';
+
+  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+  // unless they had them to begin with.
+  if (this.slashes || (!protocol || slashedProtocol[protocol]) && host !== false) {
+    host = '//' + (host || '');
+    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+  } else if (!host) {
+    host = '';
+  }
+
+  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+  if (search && search.charAt(0) !== '?') search = '?' + search;
+
+  pathname = pathname.replace(/[?#]/g, function (match) {
+    return encodeURIComponent(match);
+  });
+  search = search.replace('#', '%23');
+
+  return protocol + host + pathname + search + hash;
+};
+
+function urlResolve(source, relative) {
+  return urlParse(source, false, true).resolve(relative);
+}
+
+Url.prototype.resolve = function (relative) {
+  return this.resolveObject(urlParse(relative, false, true)).format();
+};
+
+function urlResolveObject(source, relative) {
+  if (!source) return relative;
+  return urlParse(source, false, true).resolveObject(relative);
+}
+
+Url.prototype.resolveObject = function (relative) {
+  if (util.isString(relative)) {
+    var rel = new Url();
+    rel.parse(relative, false, true);
+    relative = rel;
+  }
+
+  var result = new Url();
+  var tkeys = Object.keys(this);
+  for (var tk = 0; tk < tkeys.length; tk++) {
+    var tkey = tkeys[tk];
+    result[tkey] = this[tkey];
+  }
+
+  // hash is always overridden, no matter what.
+  // even href="" will remove it.
+  result.hash = relative.hash;
+
+  // if the relative url is empty, then there's nothing left to do here.
+  if (relative.href === '') {
+    result.href = result.format();
+    return result;
+  }
+
+  // hrefs like //foo/bar always cut to the protocol.
+  if (relative.slashes && !relative.protocol) {
+    // take everything except the protocol from relative
+    var rkeys = Object.keys(relative);
+    for (var rk = 0; rk < rkeys.length; rk++) {
+      var rkey = rkeys[rk];
+      if (rkey !== 'protocol') result[rkey] = relative[rkey];
+    }
+
+    //urlParse appends trailing / to urls like http://www.example.com
+    if (slashedProtocol[result.protocol] && result.hostname && !result.pathname) {
+      result.path = result.pathname = '/';
+    }
+
+    result.href = result.format();
+    return result;
+  }
+
+  if (relative.protocol && relative.protocol !== result.protocol) {
+    // if it's a known url protocol, then changing
+    // the protocol does weird things
+    // first, if it's not file:, then we MUST have a host,
+    // and if there was a path
+    // to begin with, then we MUST have a path.
+    // if it is file:, then the host is dropped,
+    // because that's known to be hostless.
+    // anything else is assumed to be absolute.
+    if (!slashedProtocol[relative.protocol]) {
+      var keys = Object.keys(relative);
+      for (var v = 0; v < keys.length; v++) {
+        var k = keys[v];
+        result[k] = relative[k];
+      }
+      result.href = result.format();
+      return result;
+    }
+
+    result.protocol = relative.protocol;
+    if (!relative.host && !hostlessProtocol[relative.protocol]) {
+      var relPath = (relative.pathname || '').split('/');
+      while (relPath.length && !(relative.host = relPath.shift())) {}
+      if (!relative.host) relative.host = '';
+      if (!relative.hostname) relative.hostname = '';
+      if (relPath[0] !== '') relPath.unshift('');
+      if (relPath.length < 2) relPath.unshift('');
+      result.pathname = relPath.join('/');
+    } else {
+      result.pathname = relative.pathname;
+    }
+    result.search = relative.search;
+    result.query = relative.query;
+    result.host = relative.host || '';
+    result.auth = relative.auth;
+    result.hostname = relative.hostname || relative.host;
+    result.port = relative.port;
+    // to support http.request
+    if (result.pathname || result.search) {
+      var p = result.pathname || '';
+      var s = result.search || '';
+      result.path = p + s;
+    }
+    result.slashes = result.slashes || relative.slashes;
+    result.href = result.format();
+    return result;
+  }
+
+  var isSourceAbs = result.pathname && result.pathname.charAt(0) === '/',
+      isRelAbs = relative.host || relative.pathname && relative.pathname.charAt(0) === '/',
+      mustEndAbs = isRelAbs || isSourceAbs || result.host && relative.pathname,
+      removeAllDots = mustEndAbs,
+      srcPath = result.pathname && result.pathname.split('/') || [],
+      relPath = relative.pathname && relative.pathname.split('/') || [],
+      psychotic = result.protocol && !slashedProtocol[result.protocol];
+
+  // if the url is a non-slashed url, then relative
+  // links like ../.. should be able
+  // to crawl up to the hostname, as well.  This is strange.
+  // result.protocol has already been set by now.
+  // Later on, put the first path part into the host field.
+  if (psychotic) {
+    result.hostname = '';
+    result.port = null;
+    if (result.host) {
+      if (srcPath[0] === '') srcPath[0] = result.host;else srcPath.unshift(result.host);
+    }
+    result.host = '';
+    if (relative.protocol) {
+      relative.hostname = null;
+      relative.port = null;
+      if (relative.host) {
+        if (relPath[0] === '') relPath[0] = relative.host;else relPath.unshift(relative.host);
+      }
+      relative.host = null;
+    }
+    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
+  }
+
+  if (isRelAbs) {
+    // it's absolute.
+    result.host = relative.host || relative.host === '' ? relative.host : result.host;
+    result.hostname = relative.hostname || relative.hostname === '' ? relative.hostname : result.hostname;
+    result.search = relative.search;
+    result.query = relative.query;
+    srcPath = relPath;
+    // fall through to the dot-handling below.
+  } else if (relPath.length) {
+    // it's relative
+    // throw away the existing file, and take the new path instead.
+    if (!srcPath) srcPath = [];
+    srcPath.pop();
+    srcPath = srcPath.concat(relPath);
+    result.search = relative.search;
+    result.query = relative.query;
+  } else if (!util.isNullOrUndefined(relative.search)) {
+    // just pull out the search.
+    // like href='?foo'.
+    // Put this after the other two cases because it simplifies the booleans
+    if (psychotic) {
+      result.hostname = result.host = srcPath.shift();
+      //occationaly the auth can get stuck only in host
+      //this especially happens in cases like
+      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+      var authInHost = result.host && result.host.indexOf('@') > 0 ? result.host.split('@') : false;
+      if (authInHost) {
+        result.auth = authInHost.shift();
+        result.host = result.hostname = authInHost.shift();
+      }
+    }
+    result.search = relative.search;
+    result.query = relative.query;
+    //to support http.request
+    if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
+      result.path = (result.pathname ? result.pathname : '') + (result.search ? result.search : '');
+    }
+    result.href = result.format();
+    return result;
+  }
+
+  if (!srcPath.length) {
+    // no path at all.  easy.
+    // we've already handled the other stuff above.
+    result.pathname = null;
+    //to support http.request
+    if (result.search) {
+      result.path = '/' + result.search;
+    } else {
+      result.path = null;
+    }
+    result.href = result.format();
+    return result;
+  }
+
+  // if a url ENDs in . or .., then it must get a trailing slash.
+  // however, if it ends in anything else non-slashy,
+  // then it must NOT get a trailing slash.
+  var last = srcPath.slice(-1)[0];
+  var hasTrailingSlash = (result.host || relative.host || srcPath.length > 1) && (last === '.' || last === '..') || last === '';
+
+  // strip single dots, resolve double dots to parent dir
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = srcPath.length; i >= 0; i--) {
+    last = srcPath[i];
+    if (last === '.') {
+      srcPath.splice(i, 1);
+    } else if (last === '..') {
+      srcPath.splice(i, 1);
+      up++;
+    } else if (up) {
+      srcPath.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (!mustEndAbs && !removeAllDots) {
+    for (; up--; up) {
+      srcPath.unshift('..');
+    }
+  }
+
+  if (mustEndAbs && srcPath[0] !== '' && (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
+    srcPath.unshift('');
+  }
+
+  if (hasTrailingSlash && srcPath.join('/').substr(-1) !== '/') {
+    srcPath.push('');
+  }
+
+  var isAbsolute = srcPath[0] === '' || srcPath[0] && srcPath[0].charAt(0) === '/';
+
+  // put the host back
+  if (psychotic) {
+    result.hostname = result.host = isAbsolute ? '' : srcPath.length ? srcPath.shift() : '';
+    //occationaly the auth can get stuck only in host
+    //this especially happens in cases like
+    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+    var authInHost = result.host && result.host.indexOf('@') > 0 ? result.host.split('@') : false;
+    if (authInHost) {
+      result.auth = authInHost.shift();
+      result.host = result.hostname = authInHost.shift();
+    }
+  }
+
+  mustEndAbs = mustEndAbs || result.host && srcPath.length;
+
+  if (mustEndAbs && !isAbsolute) {
+    srcPath.unshift('');
+  }
+
+  if (!srcPath.length) {
+    result.pathname = null;
+    result.path = null;
+  } else {
+    result.pathname = srcPath.join('/');
+  }
+
+  //to support request.http
+  if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
+    result.path = (result.pathname ? result.pathname : '') + (result.search ? result.search : '');
+  }
+  result.auth = relative.auth || result.auth;
+  result.slashes = result.slashes || relative.slashes;
+  result.href = result.format();
+  return result;
+};
+
+Url.prototype.parseHost = function () {
+  var host = this.host;
+  var port = portPattern.exec(host);
+  if (port) {
+    port = port[0];
+    if (port !== ':') {
+      this.port = port.substr(1);
+    }
+    host = host.substr(0, host.length - port.length);
+  }
+  if (host) this.hostname = host;
+};
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (!process.version || process.version.indexOf('v0.') === 0 || process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
+  module.exports = nextTick;
+} else {
+  module.exports = process.nextTick;
+}
+
+function nextTick(fn, arg1, arg2, arg3) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('"callback" argument must be a function');
+  }
+  var len = arguments.length;
+  var args, i;
+  switch (len) {
+    case 0:
+    case 1:
+      return process.nextTick(fn);
+    case 2:
+      return process.nextTick(function afterTickOne() {
+        fn.call(null, arg1);
+      });
+    case 3:
+      return process.nextTick(function afterTickTwo() {
+        fn.call(null, arg1, arg2);
+      });
+    case 4:
+      return process.nextTick(function afterTickThree() {
+        fn.call(null, arg1, arg2, arg3);
+      });
+    default:
+      args = new Array(len - 1);
+      i = 0;
+      while (i < args.length) {
+        args[i++] = arguments[i];
+      }
+      return process.nextTick(function afterTick() {
+        fn.apply(null, args);
+      });
+  }
+}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+
+module.exports = simpleGet;
+
+var concat = __webpack_require__(44);
+var http = __webpack_require__(45);
+var https = __webpack_require__(74);
+var once = __webpack_require__(9);
+var querystring = __webpack_require__(39);
+var unzipResponse = __webpack_require__(134 // excluded from browser build
+);var url = __webpack_require__(23);
+
+function simpleGet(opts, cb) {
+  opts = typeof opts === 'string' ? { url: opts } : Object.assign({}, opts);
+  cb = once(cb);
+
+  if (opts.url) parseOptsUrl(opts);
+  if (opts.headers == null) opts.headers = {};
+  if (opts.maxRedirects == null) opts.maxRedirects = 10;
+
+  var body;
+  if (opts.form) body = typeof opts.form === 'string' ? opts.form : querystring.stringify(opts.form);
+  if (opts.body) body = opts.json ? JSON.stringify(opts.body) : opts.body;
+
+  if (opts.json) opts.headers.accept = 'application/json';
+  if (opts.json && body) opts.headers['content-type'] = 'application/json';
+  if (opts.form) opts.headers['content-type'] = 'application/x-www-form-urlencoded';
+  if (body && !isStream(body)) opts.headers['content-length'] = Buffer.byteLength(body);
+  delete opts.body;
+  delete opts.form;
+
+  if (body && !opts.method) opts.method = 'POST';
+  if (opts.method) opts.method = opts.method.toUpperCase
+
+  // Request gzip/deflate
+  ();var customAcceptEncoding = Object.keys(opts.headers).some(function (h) {
+    return h.toLowerCase() === 'accept-encoding';
+  });
+  if (!customAcceptEncoding) opts.headers['accept-encoding'] = 'gzip, deflate';
+
+  // Support http/https urls
+  var protocol = opts.protocol === 'https:' ? https : http;
+  var req = protocol.request(opts, function (res) {
+    // Follow 3xx redirects
+    if (res.statusCode >= 300 && res.statusCode < 400 && 'location' in res.headers) {
+      opts.url = res.headers.location;
+      res.resume // Discard response
+
+      ();if (opts.maxRedirects > 0) {
+        opts.maxRedirects -= 1;
+        simpleGet(opts, cb);
+      } else {
+        cb(new Error('too many redirects'));
+      }
+      return;
+    }
+
+    var tryUnzip = typeof unzipResponse === 'function' && opts.method !== 'HEAD';
+    cb(null, tryUnzip ? unzipResponse(res) : res);
+  });
+  req.on('timeout', function () {
+    req.abort();
+    cb(new Error('Request timed out'));
+  });
+  req.on('error', cb);
+
+  if (body && isStream(body)) body.on('error', cb).pipe(req);else req.end(body);
+
+  return req;
+}
+
+simpleGet.concat = function (opts, cb) {
+  return simpleGet(opts, function (err, res) {
+    if (err) return cb(err);
+    concat(res, function (err, data) {
+      if (err) return cb(err);
+      if (opts.json) {
+        try {
+          data = JSON.parse(data.toString());
+        } catch (err) {
+          return cb(err, res, data);
+        }
+      }
+      cb(null, res, data);
+    });
+  });
+};['get', 'post', 'put', 'patch', 'head', 'delete'].forEach(function (method) {
+  simpleGet[method] = function (opts, cb) {
+    if (typeof opts === 'string') opts = { url: opts };
+    opts.method = method.toUpperCase();
+    return simpleGet(opts, cb);
+  };
+});
+
+function parseOptsUrl(opts) {
+  var loc = url.parse(opts.url);
+  if (loc.hostname) opts.hostname = loc.hostname;
+  if (loc.port) opts.port = loc.port;
+  if (loc.protocol) opts.protocol = loc.protocol;
+  if (loc.auth) opts.auth = loc.auth;
+  opts.path = loc.path;
+  delete opts.url;
+}
+
+function isStream(obj) {
+  return typeof obj.pipe === 'function';
+}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+module.exports = Peer;
+
+var debug = __webpack_require__(5)('simple-peer');
+var getBrowserRTC = __webpack_require__(73);
+var inherits = __webpack_require__(1);
+var randombytes = __webpack_require__(13);
+var stream = __webpack_require__(3);
+
+var MAX_BUFFERED_AMOUNT = 64 * 1024;
+
+inherits(Peer, stream.Duplex
+
+/**
+ * WebRTC peer connection. Same API as node core `net.Socket`, plus a few extra methods.
+ * Duplex stream.
+ * @param {Object} opts
+ */
+);function Peer(opts) {
+  var self = this;
+  if (!(self instanceof Peer)) return new Peer(opts);
+
+  self._id = randombytes(4).toString('hex').slice(0, 7);
+  self._debug('new peer %o', opts);
+
+  opts = Object.assign({
+    allowHalfOpen: false
+  }, opts);
+
+  stream.Duplex.call(self, opts);
+
+  self.channelName = opts.initiator ? opts.channelName || randombytes(20).toString('hex') : null;
+
+  // Needed by _transformConstraints, so set this early
+  self._isChromium = typeof window !== 'undefined' && !!window.webkitRTCPeerConnection;
+
+  self.initiator = opts.initiator || false;
+  self.channelConfig = opts.channelConfig || Peer.channelConfig;
+  self.config = opts.config || Peer.config;
+  self.constraints = self._transformConstraints(opts.constraints || Peer.constraints);
+  self.offerConstraints = self._transformConstraints(opts.offerConstraints || {});
+  self.answerConstraints = self._transformConstraints(opts.answerConstraints || {});
+  self.reconnectTimer = opts.reconnectTimer || false;
+  self.sdpTransform = opts.sdpTransform || function (sdp) {
+    return sdp;
+  };
+  self.stream = opts.stream || false;
+  self.trickle = opts.trickle !== undefined ? opts.trickle : true;
+
+  self.destroyed = false;
+  self.connected = false;
+
+  self.remoteAddress = undefined;
+  self.remoteFamily = undefined;
+  self.remotePort = undefined;
+  self.localAddress = undefined;
+  self.localPort = undefined;
+
+  self._wrtc = opts.wrtc && _typeof(opts.wrtc) === 'object' ? opts.wrtc : getBrowserRTC();
+
+  if (!self._wrtc) {
+    if (typeof window === 'undefined') {
+      throw new Error('No WebRTC support: Specify `opts.wrtc` option in this environment');
+    } else {
+      throw new Error('No WebRTC support: Not a supported browser');
+    }
+  }
+
+  self._pcReady = false;
+  self._channelReady = false;
+  self._iceComplete = false; // ice candidate trickle done (got null candidate)
+  self._channel = null;
+  self._pendingCandidates = [];
+  self._previousStreams = [];
+
+  self._chunk = null;
+  self._cb = null;
+  self._interval = null;
+  self._reconnectTimeout = null;
+
+  self._pc = new self._wrtc.RTCPeerConnection(self.config, self.constraints);
+
+  // We prefer feature detection whenever possible, but sometimes that's not
+  // possible for certain implementations.
+  self._isWrtc = Array.isArray(self._pc.RTCIceConnectionStates);
+  self._isReactNativeWebrtc = typeof self._pc._peerConnectionId === 'number';
+
+  self._pc.oniceconnectionstatechange = function () {
+    self._onIceStateChange();
+  };
+  self._pc.onicegatheringstatechange = function () {
+    self._onIceStateChange();
+  };
+  self._pc.onsignalingstatechange = function () {
+    self._onSignalingStateChange();
+  };
+  self._pc.onicecandidate = function (event) {
+    self._onIceCandidate(event);
+  };
+
+  // Other spec events, unused by this implementation:
+  // - onconnectionstatechange
+  // - onicecandidateerror
+  // - onfingerprintfailure
+
+  if (self.initiator) {
+    var createdOffer = false;
+    self._pc.onnegotiationneeded = function () {
+      if (!createdOffer) self._createOffer();
+      createdOffer = true;
+    };
+
+    self._setupData({
+      channel: self._pc.createDataChannel(self.channelName, self.channelConfig)
+    });
+  } else {
+    self._pc.ondatachannel = function (event) {
+      self._setupData(event);
+    };
+  }
+
+  if ('addTrack' in self._pc) {
+    // WebRTC Spec, Firefox
+    if (self.stream) {
+      self.stream.getTracks().forEach(function (track) {
+        self._pc.addTrack(track, self.stream);
+      });
+    }
+    self._pc.ontrack = function (event) {
+      self._onTrack(event);
+    };
+  } else {
+    // Chrome, etc. This can be removed once all browsers support `ontrack`
+    if (self.stream) self._pc.addStream(self.stream);
+    self._pc.onaddstream = function (event) {
+      self._onAddStream(event);
+    };
+  }
+
+  // HACK: wrtc doesn't fire the 'negotionneeded' event
+  if (self.initiator && self._isWrtc) {
+    self._pc.onnegotiationneeded();
+  }
+
+  self._onFinishBound = function () {
+    self._onFinish();
+  };
+  self.once('finish', self._onFinishBound);
+}
+
+Peer.WEBRTC_SUPPORT = !!getBrowserRTC
+
+/**
+ * Expose config, constraints, and data channel config for overriding all Peer
+ * instances. Otherwise, just set opts.config, opts.constraints, or opts.channelConfig
+ * when constructing a Peer.
+ */
+();Peer.config = {
+  iceServers: [{
+    urls: 'stun:stun.l.google.com:19302'
+  }, {
+    urls: 'stun:global.stun.twilio.com:3478?transport=udp'
+  }]
+};
+Peer.constraints = {};
+Peer.channelConfig = {};
+
+Object.defineProperty(Peer.prototype, 'bufferSize', {
+  get: function get() {
+    var self = this;
+    return self._channel && self._channel.bufferedAmount || 0;
+  }
+});
+
+Peer.prototype.address = function () {
+  var self = this;
+  return { port: self.localPort, family: 'IPv4', address: self.localAddress };
+};
+
+Peer.prototype.signal = function (data) {
+  var self = this;
+  if (self.destroyed) throw new Error('cannot signal after peer is destroyed');
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch (err) {
+      data = {};
+    }
+  }
+  self._debug('signal()');
+
+  if (data.candidate) {
+    if (self._pc.remoteDescription) self._addIceCandidate(data.candidate);else self._pendingCandidates.push(data.candidate);
+  }
+  if (data.sdp) {
+    self._pc.setRemoteDescription(new self._wrtc.RTCSessionDescription(data), function () {
+      if (self.destroyed) return;
+
+      self._pendingCandidates.forEach(function (candidate) {
+        self._addIceCandidate(candidate);
+      });
+      self._pendingCandidates = [];
+
+      if (self._pc.remoteDescription.type === 'offer') self._createAnswer();
+    }, function (err) {
+      self._destroy(err);
+    });
+  }
+  if (!data.sdp && !data.candidate) {
+    self._destroy(new Error('signal() called with invalid signal data'));
+  }
+};
+
+Peer.prototype._addIceCandidate = function (candidate) {
+  var self = this;
+  try {
+    self._pc.addIceCandidate(new self._wrtc.RTCIceCandidate(candidate), noop, function (err) {
+      self._destroy(err);
+    });
+  } catch (err) {
+    self._destroy(new Error('error adding candidate: ' + err.message));
+  }
+};
+
+/**
+ * Send text/binary data to the remote peer.
+ * @param {TypedArrayView|ArrayBuffer|Buffer|string|Blob|Object} chunk
+ */
+Peer.prototype.send = function (chunk) {
+  var self = this;
+
+  // HACK: `wrtc` module crashes on Node.js Buffer, so convert to Uint8Array
+  // See: https://github.com/feross/simple-peer/issues/60
+  if (self._isWrtc && Buffer.isBuffer(chunk)) {
+    chunk = new Uint8Array(chunk);
+  }
+
+  self._channel.send(chunk);
+};
+
+Peer.prototype.destroy = function (onclose) {
+  var self = this;
+  self._destroy(null, onclose);
+};
+
+Peer.prototype._destroy = function (err, onclose) {
+  var self = this;
+  if (self.destroyed) return;
+  if (onclose) self.once('close', onclose);
+
+  self._debug('destroy (error: %s)', err && (err.message || err));
+
+  self.readable = self.writable = false;
+
+  if (!self._readableState.ended) self.push(null);
+  if (!self._writableState.finished) self.end();
+
+  self.destroyed = true;
+  self.connected = false;
+  self._pcReady = false;
+  self._channelReady = false;
+  self._previousStreams = null;
+
+  clearInterval(self._interval);
+  clearTimeout(self._reconnectTimeout);
+  self._interval = null;
+  self._reconnectTimeout = null;
+  self._chunk = null;
+  self._cb = null;
+
+  if (self._onFinishBound) self.removeListener('finish', self._onFinishBound);
+  self._onFinishBound = null;
+
+  if (self._pc) {
+    try {
+      self._pc.close();
+    } catch (err) {}
+
+    self._pc.oniceconnectionstatechange = null;
+    self._pc.onicegatheringstatechange = null;
+    self._pc.onsignalingstatechange = null;
+    self._pc.onicecandidate = null;
+    if ('addTrack' in self._pc) {
+      self._pc.ontrack = null;
+    } else {
+      self._pc.onaddstream = null;
+    }
+    self._pc.onnegotiationneeded = null;
+    self._pc.ondatachannel = null;
+  }
+
+  if (self._channel) {
+    try {
+      self._channel.close();
+    } catch (err) {}
+
+    self._channel.onmessage = null;
+    self._channel.onopen = null;
+    self._channel.onclose = null;
+    self._channel.onerror = null;
+  }
+  self._pc = null;
+  self._channel = null;
+
+  if (err) self.emit('error', err);
+  self.emit('close');
+};
+
+Peer.prototype._setupData = function (event) {
+  var self = this;
+  if (!event.channel) {
+    // In some situations `pc.createDataChannel()` returns `undefined` (in wrtc),
+    // which is invalid behavior. Handle it gracefully.
+    // See: https://github.com/feross/simple-peer/issues/163
+    return self._destroy(new Error('Data channel event is missing `channel` property'));
+  }
+
+  self._channel = event.channel;
+  self._channel.binaryType = 'arraybuffer';
+
+  if (typeof self._channel.bufferedAmountLowThreshold === 'number') {
+    self._channel.bufferedAmountLowThreshold = MAX_BUFFERED_AMOUNT;
+  }
+
+  self.channelName = self._channel.label;
+
+  self._channel.onmessage = function (event) {
+    self._onChannelMessage(event);
+  };
+  self._channel.onbufferedamountlow = function () {
+    self._onChannelBufferedAmountLow();
+  };
+  self._channel.onopen = function () {
+    self._onChannelOpen();
+  };
+  self._channel.onclose = function () {
+    self._onChannelClose();
+  };
+  self._channel.onerror = function (err) {
+    self._destroy(err);
+  };
+};
+
+Peer.prototype._read = function () {};
+
+Peer.prototype._write = function (chunk, encoding, cb) {
+  var self = this;
+  if (self.destroyed) return cb(new Error('cannot write after peer is destroyed'));
+
+  if (self.connected) {
+    try {
+      self.send(chunk);
+    } catch (err) {
+      return self._destroy(err);
+    }
+    if (self._channel.bufferedAmount > MAX_BUFFERED_AMOUNT) {
+      self._debug('start backpressure: bufferedAmount %d', self._channel.bufferedAmount);
+      self._cb = cb;
+    } else {
+      cb(null);
+    }
+  } else {
+    self._debug('write before connect');
+    self._chunk = chunk;
+    self._cb = cb;
+  }
+};
+
+// When stream finishes writing, close socket. Half open connections are not
+// supported.
+Peer.prototype._onFinish = function () {
+  var self = this;
+  if (self.destroyed) return;
+
+  if (self.connected) {
+    destroySoon();
+  } else {
+    self.once('connect', destroySoon);
+  }
+
+  // Wait a bit before destroying so the socket flushes.
+  // TODO: is there a more reliable way to accomplish this?
+  function destroySoon() {
+    setTimeout(function () {
+      self._destroy();
+    }, 1000);
+  }
+};
+
+Peer.prototype._createOffer = function () {
+  var self = this;
+  if (self.destroyed) return;
+
+  self._pc.createOffer(function (offer) {
+    if (self.destroyed) return;
+    offer.sdp = self.sdpTransform(offer.sdp);
+    self._pc.setLocalDescription(offer, onSuccess, onError);
+
+    function onSuccess() {
+      if (self.destroyed) return;
+      if (self.trickle || self._iceComplete) sendOffer();else self.once('_iceComplete', sendOffer // wait for candidates
+      );
+    }
+
+    function onError(err) {
+      self._destroy(err);
+    }
+
+    function sendOffer() {
+      var signal = self._pc.localDescription || offer;
+      self._debug('signal');
+      self.emit('signal', {
+        type: signal.type,
+        sdp: signal.sdp
+      });
+    }
+  }, function (err) {
+    self._destroy(err);
+  }, self.offerConstraints);
+};
+
+Peer.prototype._createAnswer = function () {
+  var self = this;
+  if (self.destroyed) return;
+
+  self._pc.createAnswer(function (answer) {
+    if (self.destroyed) return;
+    answer.sdp = self.sdpTransform(answer.sdp);
+    self._pc.setLocalDescription(answer, onSuccess, onError);
+
+    function onSuccess() {
+      if (self.destroyed) return;
+      if (self.trickle || self._iceComplete) sendAnswer();else self.once('_iceComplete', sendAnswer);
+    }
+
+    function onError(err) {
+      self._destroy(err);
+    }
+
+    function sendAnswer() {
+      var signal = self._pc.localDescription || answer;
+      self._debug('signal');
+      self.emit('signal', {
+        type: signal.type,
+        sdp: signal.sdp
+      });
+    }
+  }, function (err) {
+    self._destroy(err);
+  }, self.answerConstraints);
+};
+
+Peer.prototype._onIceStateChange = function () {
+  var self = this;
+  if (self.destroyed) return;
+  var iceConnectionState = self._pc.iceConnectionState;
+  var iceGatheringState = self._pc.iceGatheringState;
+
+  self._debug('iceStateChange (connection: %s) (gathering: %s)', iceConnectionState, iceGatheringState);
+  self.emit('iceStateChange', iceConnectionState, iceGatheringState);
+
+  if (iceConnectionState === 'connected' || iceConnectionState === 'completed') {
+    clearTimeout(self._reconnectTimeout);
+    self._pcReady = true;
+    self._maybeReady();
+  }
+  if (iceConnectionState === 'disconnected') {
+    if (self.reconnectTimer) {
+      // If user has set `opt.reconnectTimer`, allow time for ICE to attempt a reconnect
+      clearTimeout(self._reconnectTimeout);
+      self._reconnectTimeout = setTimeout(function () {
+        self._destroy();
+      }, self.reconnectTimer);
+    } else {
+      self._destroy();
+    }
+  }
+  if (iceConnectionState === 'failed') {
+    self._destroy(new Error('Ice connection failed.'));
+  }
+  if (iceConnectionState === 'closed') {
+    self._destroy();
+  }
+};
+
+Peer.prototype.getStats = function (cb) {
+  var self = this;
+
+  // Promise-based getStats() (standard)
+  if (self._pc.getStats.length === 0) {
+    self._pc.getStats().then(function (res) {
+      var reports = [];
+      res.forEach(function (report) {
+        reports.push(report);
+      });
+      cb(null, reports);
+    }, function (err) {
+      cb(err);
+    }
+
+    // Two-parameter callback-based getStats() (deprecated, former standard)
+    );
+  } else if (self._isReactNativeWebrtc) {
+    self._pc.getStats(null, function (res) {
+      var reports = [];
+      res.forEach(function (report) {
+        reports.push(report);
+      });
+      cb(null, reports);
+    }, function (err) {
+      cb(err);
+    }
+
+    // Single-parameter callback-based getStats() (non-standard)
+    );
+  } else if (self._pc.getStats.length > 0) {
+    self._pc.getStats(function (res) {
+      var reports = [];
+      res.result().forEach(function (result) {
+        var report = {};
+        result.names().forEach(function (name) {
+          report[name] = result.stat(name);
+        });
+        report.id = result.id;
+        report.type = result.type;
+        report.timestamp = result.timestamp;
+        reports.push(report);
+      });
+      cb(null, reports);
+    }, function (err) {
+      cb(err);
+    }
+
+    // Unknown browser, skip getStats() since it's anyone's guess which style of
+    // getStats() they implement.
+    );
+  } else {
+    cb(null, []);
+  }
+};
+
+Peer.prototype._maybeReady = function () {
+  var self = this;
+  self._debug('maybeReady pc %s channel %s', self._pcReady, self._channelReady);
+  if (self.connected || self._connecting || !self._pcReady || !self._channelReady) return;
+  self._connecting = true;
+
+  self.getStats(function (err, items) {
+    if (self.destroyed) return;
+
+    // Treat getStats error as non-fatal. It's not essential.
+    if (err) items = [];
+
+    self._connecting = false;
+    self.connected = true;
+
+    var remoteCandidates = {};
+    var localCandidates = {};
+    var candidatePairs = {};
+
+    items.forEach(function (item) {
+      // TODO: Once all browsers support the hyphenated stats report types, remove
+      // the non-hypenated ones
+      if (item.type === 'remotecandidate' || item.type === 'remote-candidate') {
+        remoteCandidates[item.id] = item;
+      }
+      if (item.type === 'localcandidate' || item.type === 'local-candidate') {
+        localCandidates[item.id] = item;
+      }
+      if (item.type === 'candidatepair' || item.type === 'candidate-pair') {
+        candidatePairs[item.id] = item;
+      }
+    });
+
+    items.forEach(function (item) {
+      // Spec-compliant
+      if (item.type === 'transport') {
+        setSelectedCandidatePair(candidatePairs[item.selectedCandidatePairId]);
+      }
+
+      // Old implementations
+      if (item.type === 'googCandidatePair' && item.googActiveConnection === 'true' || (item.type === 'candidatepair' || item.type === 'candidate-pair') && item.selected) {
+        setSelectedCandidatePair(item);
+      }
+    });
+
+    function setSelectedCandidatePair(selectedCandidatePair) {
+      var local = localCandidates[selectedCandidatePair.localCandidateId];
+
+      if (local && local.ip) {
+        // Spec
+        self.localAddress = local.ip;
+        self.localPort = Number(local.port);
+      } else if (local && local.ipAddress) {
+        // Firefox
+        self.localAddress = local.ipAddress;
+        self.localPort = Number(local.portNumber);
+      } else if (typeof selectedCandidatePair.googLocalAddress === 'string') {
+        // TODO: remove this once Chrome 58 is released
+        local = selectedCandidatePair.googLocalAddress.split(':');
+        self.localAddress = local[0];
+        self.localPort = Number(local[1]);
+      }
+
+      var remote = remoteCandidates[selectedCandidatePair.remoteCandidateId];
+
+      if (remote && remote.ip) {
+        // Spec
+        self.remoteAddress = remote.ip;
+        self.remotePort = Number(remote.port);
+      } else if (remote && remote.ipAddress) {
+        // Firefox
+        self.remoteAddress = remote.ipAddress;
+        self.remotePort = Number(remote.portNumber);
+      } else if (typeof selectedCandidatePair.googRemoteAddress === 'string') {
+        // TODO: remove this once Chrome 58 is released
+        remote = selectedCandidatePair.googRemoteAddress.split(':');
+        self.remoteAddress = remote[0];
+        self.remotePort = Number(remote[1]);
+      }
+      self.remoteFamily = 'IPv4';
+
+      self._debug('connect local: %s:%s remote: %s:%s', self.localAddress, self.localPort, self.remoteAddress, self.remotePort);
+    }
+
+    if (self._chunk) {
+      try {
+        self.send(self._chunk);
+      } catch (err) {
+        return self._destroy(err);
+      }
+      self._chunk = null;
+      self._debug('sent chunk from "write before connect"');
+
+      var cb = self._cb;
+      self._cb = null;
+      cb(null);
+    }
+
+    // If `bufferedAmountLowThreshold` and 'onbufferedamountlow' are unsupported,
+    // fallback to using setInterval to implement backpressure.
+    if (typeof self._channel.bufferedAmountLowThreshold !== 'number') {
+      self._interval = setInterval(function () {
+        self._onInterval();
+      }, 150);
+      if (self._interval.unref) self._interval.unref();
+    }
+
+    self._debug('connect');
+    self.emit('connect');
+  });
+};
+
+Peer.prototype._onInterval = function () {
+  if (!this._cb || !this._channel || this._channel.bufferedAmount > MAX_BUFFERED_AMOUNT) {
+    return;
+  }
+  this._onChannelBufferedAmountLow();
+};
+
+Peer.prototype._onSignalingStateChange = function () {
+  var self = this;
+  if (self.destroyed) return;
+  self._debug('signalingStateChange %s', self._pc.signalingState);
+  self.emit('signalingStateChange', self._pc.signalingState);
+};
+
+Peer.prototype._onIceCandidate = function (event) {
+  var self = this;
+  if (self.destroyed) return;
+  if (event.candidate && self.trickle) {
+    self.emit('signal', {
+      candidate: {
+        candidate: event.candidate.candidate,
+        sdpMLineIndex: event.candidate.sdpMLineIndex,
+        sdpMid: event.candidate.sdpMid
+      }
+    });
+  } else if (!event.candidate) {
+    self._iceComplete = true;
+    self.emit('_iceComplete');
+  }
+};
+
+Peer.prototype._onChannelMessage = function (event) {
+  var self = this;
+  if (self.destroyed) return;
+  var data = event.data;
+  if (data instanceof ArrayBuffer) data = Buffer.from(data);
+  self.push(data);
+};
+
+Peer.prototype._onChannelBufferedAmountLow = function () {
+  var self = this;
+  if (self.destroyed || !self._cb) return;
+  self._debug('ending backpressure: bufferedAmount %d', self._channel.bufferedAmount);
+  var cb = self._cb;
+  self._cb = null;
+  cb(null);
+};
+
+Peer.prototype._onChannelOpen = function () {
+  var self = this;
+  if (self.connected || self.destroyed) return;
+  self._debug('on channel open');
+  self._channelReady = true;
+  self._maybeReady();
+};
+
+Peer.prototype._onChannelClose = function () {
+  var self = this;
+  if (self.destroyed) return;
+  self._debug('on channel close');
+  self._destroy();
+};
+
+Peer.prototype._onAddStream = function (event) {
+  var self = this;
+  if (self.destroyed) return;
+  self._debug('on add stream');
+  self.emit('stream', event.stream);
+};
+
+Peer.prototype._onTrack = function (event) {
+  var self = this;
+  if (self.destroyed) return;
+  self._debug('on track');
+  var id = event.streams[0].id;
+  if (self._previousStreams.indexOf(id) !== -1) return; // Only fire one 'stream' event, even though there may be multiple tracks per stream
+  self._previousStreams.push(id);
+  self.emit('stream', event.streams[0]);
+};
+
+Peer.prototype._debug = function () {
+  var self = this;
+  var args = [].slice.call(arguments);
+  args[0] = '[' + self._id + '] ' + args[0];
+  debug.apply(null, args);
+};
+
+// Transform constraints objects into the new format (unless Chromium)
+// TODO: This can be removed when Chromium supports the new format
+Peer.prototype._transformConstraints = function (constraints) {
+  var self = this;
+
+  if (Object.keys(constraints).length === 0) {
+    return constraints;
+  }
+
+  if ((constraints.mandatory || constraints.optional) && !self._isChromium) {
+    // convert to new format
+
+    // Merge mandatory and optional objects, prioritizing mandatory
+    var newConstraints = Object.assign({}, constraints.optional, constraints.mandatory
+
+    // fix casing
+    );if (newConstraints.OfferToReceiveVideo !== undefined) {
+      newConstraints.offerToReceiveVideo = newConstraints.OfferToReceiveVideo;
+      delete newConstraints['OfferToReceiveVideo'];
+    }
+
+    if (newConstraints.OfferToReceiveAudio !== undefined) {
+      newConstraints.offerToReceiveAudio = newConstraints.OfferToReceiveAudio;
+      delete newConstraints['OfferToReceiveAudio'];
+    }
+
+    return newConstraints;
+  } else if (!constraints.mandatory && !constraints.optional && self._isChromium) {
+    // convert to old format
+
+    // fix casing
+    if (constraints.offerToReceiveVideo !== undefined) {
+      constraints.OfferToReceiveVideo = constraints.offerToReceiveVideo;
+      delete constraints['offerToReceiveVideo'];
+    }
+
+    if (constraints.offerToReceiveAudio !== undefined) {
+      constraints.OfferToReceiveAudio = constraints.offerToReceiveAudio;
+      delete constraints['offerToReceiveAudio'];
+    }
+
+    return {
+      mandatory: constraints // NOTE: All constraints are upgraded to mandatory
+    };
+  }
+
+  return constraints;
+};
+
+function noop() {}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var tick = 1;
+var maxTick = 65535;
+var resolution = 4;
+var inc = function inc() {
+  tick = tick + 1 & maxTick;
+};
+
+var timer = setInterval(inc, 1000 / resolution | 0);
+if (timer.unref) timer.unref();
+
+module.exports = function (seconds) {
+  var size = resolution * (seconds || 5);
+  var buffer = [0];
+  var pointer = 1;
+  var last = tick - 1 & maxTick;
+
+  return function (delta) {
+    var dist = tick - last & maxTick;
+    if (dist > size) dist = size;
+    last = tick;
+
+    while (dist--) {
+      if (pointer === size) pointer = 0;
+      buffer[pointer] = buffer[pointer === 0 ? size - 1 : pointer - 1];
+      pointer++;
+    }
+
+    if (delta) buffer[pointer - 1] += delta;
+
+    var top = buffer[pointer - 1];
+    var btm = buffer.length < size ? 0 : buffer[pointer === size ? 0 : pointer];
+
+    return buffer.length < resolution ? top : (top - btm) * resolution / buffer.length;
+  };
+};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+module.exports = {
+	"_args": [
+		[
+			"webtorrent@^0.98.18",
+			"E:\\Repositorys\\peerCam"
+		]
+	],
+	"_from": "webtorrent@>=0.98.18 <0.99.0",
+	"_id": "webtorrent@0.98.18",
+	"_inCache": true,
+	"_installable": true,
+	"_location": "/webtorrent",
+	"_nodeVersion": "7.8.0",
+	"_npmOperationalInternal": {
+		"host": "packages-18-east.internal.npmjs.com",
+		"tmp": "tmp/webtorrent-0.98.18.tgz_1492206160560_0.39563035732135177"
+	},
+	"_npmUser": {
+		"email": "feross@feross.org",
+		"name": "feross"
+	},
+	"_npmVersion": "4.5.0",
+	"_phantomChildren": {},
+	"_requested": {
+		"name": "webtorrent",
+		"raw": "webtorrent@^0.98.18",
+		"rawSpec": "^0.98.18",
+		"scope": null,
+		"spec": ">=0.98.18 <0.99.0",
+		"type": "range"
+	},
+	"_requiredBy": [
+		"/"
+	],
+	"_resolved": "https://registry.npmjs.org/webtorrent/-/webtorrent-0.98.18.tgz",
+	"_shasum": "d8e0e04a52af884e9cffa361cbe8c159a4cb6f98",
+	"_shrinkwrap": null,
+	"_spec": "webtorrent@^0.98.18",
+	"_where": "E:\\Repositorys\\peerCam",
+	"author": {
+		"email": "feross@webtorrent.io",
+		"name": "WebTorrent, LLC",
+		"url": "https://webtorrent.io"
+	},
+	"browser": {
+		"./lib/server.js": false,
+		"./lib/tcp-pool.js": false,
+		"bittorrent-dht/client": false,
+		"fs-chunk-store": "memory-chunk-store",
+		"load-ip-set": false,
+		"net": false,
+		"os": false,
+		"ut_pex": false
+	},
+	"browserify": {
+		"transform": [
+			"package-json-versionify"
+		]
+	},
+	"bugs": {
+		"url": "https://github.com/webtorrent/webtorrent/issues"
+	},
+	"dependencies": {
+		"addr-to-ip-port": "^1.4.2",
+		"bitfield": "^1.1.2",
+		"bittorrent-dht": "^7.2.2",
+		"bittorrent-protocol": "^2.1.5",
+		"chunk-store-stream": "^2.0.2",
+		"create-torrent": "^3.24.5",
+		"debug": "^2.2.0",
+		"end-of-stream": "^1.1.0",
+		"fs-chunk-store": "^1.6.2",
+		"immediate-chunk-store": "^1.0.8",
+		"inherits": "^2.0.1",
+		"load-ip-set": "^1.2.7",
+		"memory-chunk-store": "^1.2.0",
+		"mime": "^1.3.4",
+		"multistream": "^2.0.5",
+		"package-json-versionify": "^1.0.2",
+		"parse-torrent": "^5.8.0",
+		"pump": "^1.0.1",
+		"random-iterate": "^1.0.1",
+		"randombytes": "^2.0.3",
+		"range-parser": "^1.2.0",
+		"readable-stream": "^2.1.4",
+		"render-media": "^2.8.0",
+		"run-parallel": "^1.1.6",
+		"run-parallel-limit": "^1.0.3",
+		"safe-buffer": "^5.0.1",
+		"simple-concat": "^1.0.0",
+		"simple-get": "^2.2.1",
+		"simple-peer": "^8.0.0",
+		"simple-sha1": "^2.0.8",
+		"speedometer": "^1.0.0",
+		"stream-to-blob": "^1.0.0",
+		"stream-to-blob-url": "^2.1.0",
+		"stream-with-known-length-to-buffer": "^1.0.0",
+		"torrent-discovery": "^8.1.0",
+		"torrent-piece": "^1.1.0",
+		"uniq": "^1.0.1",
+		"unordered-array-remove": "^1.0.2",
+		"ut_metadata": "^3.0.8",
+		"ut_pex": "^1.1.1",
+		"xtend": "^4.0.1",
+		"zero-fill": "^2.2.3"
+	},
+	"description": "Streaming torrent client",
+	"devDependencies": {
+		"bittorrent-tracker": "^9.0.0",
+		"brfs": "^1.4.3",
+		"browserify": "^14.0.0",
+		"cross-spawn": "^5.0.1",
+		"electron-prebuilt": "^0.37.8",
+		"finalhandler": "^1.0.0",
+		"network-address": "^1.1.0",
+		"run-series": "^1.1.4",
+		"serve-static": "^1.11.1",
+		"standard": "*",
+		"tape": "^4.6.0",
+		"uglify-js": "^2.7.0",
+		"webtorrent-fixtures": "^1.5.0",
+		"zuul": "^3.10.1"
+	},
+	"directories": {},
+	"dist": {
+		"shasum": "d8e0e04a52af884e9cffa361cbe8c159a4cb6f98",
+		"tarball": "https://registry.npmjs.org/webtorrent/-/webtorrent-0.98.18.tgz"
+	},
+	"engines": {
+		"node": ">=4"
+	},
+	"gitHead": "eb7ef40d80ebf7fa29188efe0580f2b0c5f3c95c",
+	"homepage": "https://webtorrent.io",
+	"keywords": [
+		"bittorrent",
+		"bittorrent client",
+		"download",
+		"mad science",
+		"p2p",
+		"peer-to-peer",
+		"peers",
+		"streaming",
+		"swarm",
+		"torrent",
+		"web torrent",
+		"webrtc",
+		"webrtc data",
+		"webtorrent"
+	],
+	"license": "MIT",
+	"main": "index.js",
+	"maintainers": [
+		{
+			"email": "feross@feross.org",
+			"name": "feross"
+		}
+	],
+	"name": "webtorrent",
+	"optionalDependencies": {},
+	"readme": "ERROR: No README data found!",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/webtorrent/webtorrent.git"
+	},
+	"scripts": {
+		"build": "browserify -s WebTorrent -e ./ | uglifyjs -c warnings=false -m > webtorrent.min.js",
+		"build-debug": "browserify -s WebTorrent -e ./ > webtorrent.debug.js",
+		"size": "npm run build && cat webtorrent.min.js | gzip | wc -c",
+		"test": "standard && node ./bin/test.js",
+		"test-browser": "zuul -- test/*.js test/browser/*.js",
+		"test-browser-headless": "zuul --electron -- test/*.js test/browser/*.js",
+		"test-browser-local": "zuul --local -- test/*.js test/browser/*.js",
+		"test-node": "tape test/*.js test/node/*.js",
+		"update-authors": "./bin/update-authors.sh"
+	},
+	"version": "0.98.18"
+};
+
+/***/ }),
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7882,7 +7882,7 @@ var debug = __webpack_require__(5)('bittorrent-protocol');
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
 var randombytes = __webpack_require__(13);
-var speedometer = __webpack_require__(26);
+var speedometer = __webpack_require__(27);
 var stream = __webpack_require__(3);
 
 var BITFIELD_GROW = 400000;
@@ -8637,7 +8637,7 @@ exports.hexToBinary = function (str) {
   return Buffer.from(str, 'hex').toString('binary');
 };
 
-var config = __webpack_require__(129);
+var config = __webpack_require__(131);
 extend(exports, config);
 
 /***/ }),
@@ -8651,7 +8651,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var inherits = __webpack_require__(1);
 var Transform = __webpack_require__(3).Transform;
-var defined = __webpack_require__(68);
+var defined = __webpack_require__(70);
 
 module.exports = Block;
 inherits(Block, Transform);
@@ -9447,11 +9447,11 @@ function base64DetectIncompleteChar(buffer) {
 module.exports = parseTorrent;
 module.exports.remote = parseTorrentRemote;
 
-var blobToBuffer = __webpack_require__(62);
+var blobToBuffer = __webpack_require__(64);
 var fs = __webpack_require__(19 // browser exclude
-);var get = __webpack_require__(24);
-var magnet = __webpack_require__(79);
-var parseTorrentFile = __webpack_require__(89);
+);var get = __webpack_require__(25);
+var magnet = __webpack_require__(81);
+var parseTorrentFile = __webpack_require__(91);
 
 module.exports.toMagnetURI = magnet.encode;
 module.exports.toTorrentFile = parseTorrentFile.encode;
@@ -9565,7 +9565,7 @@ function isBlob(obj) {
 
 var once = __webpack_require__(9);
 var eos = __webpack_require__(32);
-var fs = __webpack_require__(130 // we only need fs to get the ReadStream and WriteStream prototypes
+var fs = __webpack_require__(132 // we only need fs to get the ReadStream and WriteStream prototypes
 
 );var noop = function noop() {};
 
@@ -9651,8 +9651,8 @@ module.exports = pump;
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(92);
-exports.encode = exports.stringify = __webpack_require__(93);
+exports.decode = exports.parse = __webpack_require__(94);
+exports.encode = exports.stringify = __webpack_require__(95);
 
 /***/ }),
 /* 40 */
@@ -9664,7 +9664,7 @@ exports.encode = exports.stringify = __webpack_require__(93);
 module.exports = Readable;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(23);
+var processNextTick = __webpack_require__(24);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -9691,7 +9691,7 @@ var Stream = __webpack_require__(43);
 
 var Buffer = __webpack_require__(0).Buffer;
 /*<replacement>*/
-var bufferShim = __webpack_require__(21);
+var bufferShim = __webpack_require__(22);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -9700,7 +9700,7 @@ util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(131);
+var debugUtil = __webpack_require__(133);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -9709,7 +9709,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(97);
+var BufferList = __webpack_require__(99);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -10798,7 +10798,7 @@ function done(stream, er, data) {
 module.exports = Writable;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(23);
+var processNextTick = __webpack_require__(24);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -10818,7 +10818,7 @@ util.inherits = __webpack_require__(1);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(114)
+  deprecate: __webpack_require__(116)
 };
 /*</replacement>*/
 
@@ -10828,7 +10828,7 @@ var Stream = __webpack_require__(43);
 
 var Buffer = __webpack_require__(0).Buffer;
 /*<replacement>*/
-var bufferShim = __webpack_require__(21);
+var bufferShim = __webpack_require__(22);
 /*</replacement>*/
 
 util.inherits(Writable, Stream);
@@ -11333,7 +11333,7 @@ function CorkedRequest(state) {
     }
   };
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(108).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(110).setImmediate))
 
 /***/ }),
 /* 43 */
@@ -11374,10 +11374,10 @@ module.exports = function (stream, cb) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var ClientRequest = __webpack_require__(103);
+var ClientRequest = __webpack_require__(105);
 var extend = __webpack_require__(7);
-var statusCodes = __webpack_require__(63);
-var url = __webpack_require__(22);
+var statusCodes = __webpack_require__(65);
+var url = __webpack_require__(23);
 
 var http = exports;
 
@@ -11647,28 +11647,28 @@ module.exports = WebTorrent;
 
 var Buffer = __webpack_require__(8).Buffer;
 var concat = __webpack_require__(44);
-var createTorrent = __webpack_require__(66);
+var createTorrent = __webpack_require__(68);
 var debug = __webpack_require__(5)('webtorrent');
-var DHT = __webpack_require__(136 // browser exclude
+var DHT = __webpack_require__(138 // browser exclude
 );var EventEmitter = __webpack_require__(6).EventEmitter;
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
-var loadIPSet = __webpack_require__(137 // browser exclude
+var loadIPSet = __webpack_require__(139 // browser exclude
 );var parallel = __webpack_require__(14);
 var parseTorrent = __webpack_require__(37);
 var path = __webpack_require__(10);
-var Peer = __webpack_require__(25);
+var Peer = __webpack_require__(26);
 var randombytes = __webpack_require__(13);
-var speedometer = __webpack_require__(26);
-var zeroFill = __webpack_require__(125);
+var speedometer = __webpack_require__(27);
+var zeroFill = __webpack_require__(127);
 
-var TCPPool = __webpack_require__(135 // browser exclude
-);var Torrent = __webpack_require__(122
+var TCPPool = __webpack_require__(137 // browser exclude
+);var Torrent = __webpack_require__(124
 
 /**
  * WebTorrent version.
  */
-);var VERSION = __webpack_require__(27).version;
+);var VERSION = __webpack_require__(28).version;
 
 /**
  * Version number in Azureus-style. Generated from major and minor semver version.
@@ -12119,7 +12119,107 @@ function isFileList(obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(2)))
 
 /***/ }),
-/* 54 */
+/* 54 */,
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// API https://github.com/webtorrent/webtorrent/blob/master/docs/api.md
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MediaStreamRecorder = __webpack_require__(21);
+var WebTorrent = __webpack_require__(53);
+var EventEmitter = __webpack_require__(144);
+
+var defaultOptions = {
+  seconds: 8000,
+  announceList: [],
+  mediaConstraints: {
+    audio: true, // don't forget audio!
+    video: true // don't forget video!
+  }
+};
+
+var Viewer = function (_EventEmitter) {
+  _inherits(Viewer, _EventEmitter);
+
+  function Viewer() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Viewer);
+
+    var _this = _possibleConstructorReturn(this, (Viewer.__proto__ || Object.getPrototypeOf(Viewer)).call(this));
+
+    _this._webTorrentClient = new WebTorrent();
+    _this._options = Object.assign(defaultOptions, options);
+    return _this;
+  }
+
+  _createClass(Viewer, [{
+    key: 'start',
+    value: function start(magnetURI) {
+      var _this2 = this;
+
+      var opts = {
+        announce: this._options.announceList,
+        // store: // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
+        getAnnounceOpts: function getAnnounceOpts() {
+          return {
+            customUsername: 'fooBar'
+          };
+        },
+        dht: false
+      };
+
+      this._webTorrentClient.add(magnetURI, opts, function (torrent) {
+        /* Look for the file that ends in .webm and render it, in the future we can
+         * add additional file types for scaling. E.g other video formats or even VR!
+         */
+
+        var file = torrent.files.find(function (file) {
+          return file.name.endsWith('.webm');
+        });
+
+        torrent.on('download', function (bytes) {
+          console.log('just downloaded: ' + bytes);
+          console.log('total downloaded: ' + torrent.downloaded);
+          console.log('download speed: ' + torrent.downloadSpeed);
+          console.log('progress: ' + torrent.progress);
+        });
+
+        torrent.on('wire', function (wire, addr) {
+          console.log('Connected to peer with address ' + addr);
+        }
+
+        // Stream the file in the browser
+        );file.renderTo(_this2._options.renderTo, {
+          autoplay: true
+        }
+
+        // listens for when torrents are done and appends total downloaded to menu
+        );torrent.on('done', function () {
+          console.log('Torrent done');
+        });
+      });
+    }
+  }]);
+
+  return Viewer;
+}(EventEmitter);
+
+module.exports = Viewer;
+
+/***/ }),
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12150,7 +12250,7 @@ module.exports.reset = function reset() {
 };
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12270,7 +12370,7 @@ function fromByteArray(uint8) {
 }
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12436,7 +12536,7 @@ module.exports = decode;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12555,7 +12655,7 @@ module.exports = encode;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12595,7 +12695,7 @@ module.exports = function (haystack, needle, comparator, low, high) {
 };
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12610,14 +12710,14 @@ var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
 var once = __webpack_require__(9);
 var parallel = __webpack_require__(14);
-var Peer = __webpack_require__(25);
+var Peer = __webpack_require__(26);
 var uniq = __webpack_require__(20);
-var url = __webpack_require__(22);
+var url = __webpack_require__(23);
 
 var common = __webpack_require__(30);
-var HTTPTracker = __webpack_require__(127 // empty object in browser
-);var UDPTracker = __webpack_require__(128 // empty object in browser
-);var WebSocketTracker = __webpack_require__(61);
+var HTTPTracker = __webpack_require__(129 // empty object in browser
+);var UDPTracker = __webpack_require__(130 // empty object in browser
+);var WebSocketTracker = __webpack_require__(63);
 
 inherits(Client, EventEmitter
 
@@ -12888,7 +12988,7 @@ Client.prototype._defaultAnnounceOpts = function (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12926,7 +13026,7 @@ Tracker.prototype.setInterval = function (intervalMs) {
 };
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12937,12 +13037,12 @@ module.exports = WebSocketTracker;
 var debug = __webpack_require__(5)('bittorrent-tracker:websocket-tracker');
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
-var Peer = __webpack_require__(25);
+var Peer = __webpack_require__(26);
 var randombytes = __webpack_require__(13);
-var Socket = __webpack_require__(102);
+var Socket = __webpack_require__(104);
 
 var common = __webpack_require__(30);
-var Tracker = __webpack_require__(60
+var Tracker = __webpack_require__(62
 
 // Use a socket pool, so tracker clients share WebSocket objects for the same server.
 // In practice, WebSockets are pretty slow to establish, so this gives a nice performance
@@ -13370,7 +13470,7 @@ WebSocketTracker.prototype._createPeer = function (opts) {
 function noop() {}
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13399,7 +13499,7 @@ module.exports = function blobToBuffer(blob, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13471,7 +13571,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13530,7 +13630,7 @@ ChunkStoreWriteStream.prototype.destroy = function (err) {
 };
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13559,7 +13659,7 @@ function closest(n, arr, rndx) {
 }
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13574,14 +13674,14 @@ module.exports.announceList = [['udp://tracker.leechers-paradise.org:6969'], ['u
 
 var bencode = __webpack_require__(16);
 var BlockStream = __webpack_require__(31);
-var calcPieceLength = __webpack_require__(90);
+var calcPieceLength = __webpack_require__(92);
 var corePath = __webpack_require__(10);
 var extend = __webpack_require__(7);
-var FileReadStream = __webpack_require__(69);
-var flatten = __webpack_require__(70);
+var FileReadStream = __webpack_require__(71);
+var flatten = __webpack_require__(72);
 var fs = __webpack_require__(19);
-var isFile = __webpack_require__(76);
-var junk = __webpack_require__(78);
+var isFile = __webpack_require__(78);
+var junk = __webpack_require__(80);
 var MultiStream = __webpack_require__(35);
 var once = __webpack_require__(9);
 var parallel = __webpack_require__(14);
@@ -14051,7 +14151,7 @@ function getStreamStream(readable, file) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14069,7 +14169,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(86);
+exports.humanize = __webpack_require__(88);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -14254,7 +14354,7 @@ function coerce(val) {
 }
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14267,7 +14367,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14276,7 +14376,7 @@ module.exports = function () {
 var Readable = __webpack_require__(3).Readable;
 var inherits = __webpack_require__(1);
 var reExtension = /^.*\.(\w+)$/;
-var toBuffer = __webpack_require__(111);
+var toBuffer = __webpack_require__(113);
 
 function FileReadStream(file, opts) {
   var readStream = this;
@@ -14369,7 +14469,7 @@ FileReadStream.prototype.destroy = function () {
 };
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14401,7 +14501,7 @@ module.exports = function flatten(list, depth) {
 };
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14421,7 +14521,7 @@ module.exports = function getBrowserRTC() {
 };
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14443,7 +14543,7 @@ https.request = function (params, cb) {
 };
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14535,7 +14635,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 };
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14593,7 +14693,7 @@ function nextTick(cb, err, val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14614,7 +14714,7 @@ module.exports = function isAscii(str) {
 };
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14638,7 +14738,7 @@ function isFileSync(path) {
 }
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14674,7 +14774,7 @@ function isLooseTypedArray(arr) {
 }
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14710,7 +14810,7 @@ exports.not = exports.isnt = function (filename) {
 };
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14720,7 +14820,7 @@ module.exports = magnetURIDecode;
 module.exports.decode = magnetURIDecode;
 module.exports.encode = magnetURIEncode;
 
-var base32 = __webpack_require__(106);
+var base32 = __webpack_require__(108);
 var Buffer = __webpack_require__(8).Buffer;
 var extend = __webpack_require__(7);
 var uniq = __webpack_require__(20
@@ -14847,7 +14947,7 @@ function magnetURIEncode(obj) {
 }
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14912,7 +15012,7 @@ function nextTick(cb, err, val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14920,7 +15020,7 @@ function nextTick(cb, err, val) {
 
 // This is an intentionally recursive require. I don't like it either.
 var Box = __webpack_require__(18);
-var Descriptor = __webpack_require__(82);
+var Descriptor = __webpack_require__(84);
 
 var TIME_OFFSET = 2082844800000;
 
@@ -15831,7 +15931,7 @@ function readString(buf, offset, length) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15912,7 +16012,7 @@ exports.DecoderConfigDescriptor.decode = function (buf, start, end) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15920,7 +16020,7 @@ exports.DecoderConfigDescriptor.decode = function (buf, start, end) {
 
 var stream = __webpack_require__(3);
 var inherits = __webpack_require__(1);
-var nextEvent = __webpack_require__(87);
+var nextEvent = __webpack_require__(89);
 var Box = __webpack_require__(18);
 
 var EMPTY = new Buffer(0);
@@ -16104,7 +16204,7 @@ MediaData.prototype.destroy = function (err) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16242,17 +16342,17 @@ MediaData.prototype.destroy = function (err) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(2)))
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = __webpack_require__(83);
-exports.encode = __webpack_require__(84);
+exports.decode = __webpack_require__(85);
+exports.encode = __webpack_require__(86);
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16379,7 +16479,7 @@ function plural(ms, n, name) {
 }
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16402,7 +16502,7 @@ function nextEvent(emitter, name) {
 }
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16426,7 +16526,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16580,13 +16680,13 @@ function ensure(bool, fieldName) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var closest = __webpack_require__(65);
+var closest = __webpack_require__(67);
 var kB = Math.pow(2, 10
 
 // Create a range from 16kb–4mb
@@ -16599,7 +16699,7 @@ while (p++ < 22) {
 };
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17133,10 +17233,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		root.punycode = punycode;
 	}
 })(undefined);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(117)(module), __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(119)(module), __webpack_require__(4)))
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17230,7 +17330,7 @@ var isArray = Array.isArray || function (xs) {
 };
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17321,7 +17421,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17348,7 +17448,7 @@ var iterate = function iterate(list) {
 module.exports = iterate;
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17481,7 +17581,7 @@ RangeSliceStream.prototype.destroy = function (err) {
 };
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17513,7 +17613,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17521,7 +17621,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 
 var Buffer = __webpack_require__(0).Buffer;
 /*<replacement>*/
-var bufferShim = __webpack_require__(21);
+var bufferShim = __webpack_require__(22);
 /*</replacement>*/
 
 module.exports = BufferList;
@@ -17583,7 +17683,7 @@ BufferList.prototype.concat = function (n) {
 };
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17591,14 +17691,14 @@ BufferList.prototype.concat = function (n) {
 
 exports.render = render;
 exports.append = append;
-exports.mime = __webpack_require__(126);
+exports.mime = __webpack_require__(128);
 
 var debug = __webpack_require__(5)('render-media');
-var isAscii = __webpack_require__(75);
+var isAscii = __webpack_require__(77);
 var MediaElementWrapper = __webpack_require__(34);
 var path = __webpack_require__(10);
 var streamToBlobURL = __webpack_require__(47);
-var videostream = __webpack_require__(116);
+var videostream = __webpack_require__(118);
 
 var VIDEOSTREAM_EXTS = ['.m4a', '.m4v', '.mp4'];
 
@@ -17890,7 +17990,7 @@ function parseOpts(opts) {
 }
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17968,7 +18068,7 @@ module.exports = function (tasks, limit, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18536,7 +18636,7 @@ module.exports = function (tasks, limit, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18727,7 +18827,7 @@ module.exports = function (tasks, limit, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(2)))
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18742,7 +18842,7 @@ var debug = __webpack_require__(5)('simple-websocket');
 var inherits = __webpack_require__(1);
 var randombytes = __webpack_require__(13);
 var stream = __webpack_require__(3);
-var ws = __webpack_require__(133 // websockets in node - will be empty object in browser
+var ws = __webpack_require__(135 // websockets in node - will be empty object in browser
 
 );var _WebSocket = typeof ws !== 'function' ? WebSocket : ws;
 
@@ -18999,7 +19099,7 @@ Socket.prototype._debug = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19007,7 +19107,7 @@ Socket.prototype._debug = function () {
 
 var capability = __webpack_require__(46);
 var inherits = __webpack_require__(1);
-var response = __webpack_require__(104);
+var response = __webpack_require__(106);
 var stream = __webpack_require__(3);
 var toArrayBuffer = __webpack_require__(49);
 
@@ -19280,7 +19380,7 @@ var unsafeHeaders = ['accept-charset', 'accept-encoding', 'access-control-reques
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(4), __webpack_require__(2)))
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19467,7 +19567,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(0).Buffer, __webpack_require__(4)))
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19489,7 +19589,7 @@ module.exports = function getBuffer(stream, length, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19517,13 +19617,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var base32 = __webpack_require__(107);
+var base32 = __webpack_require__(109);
 
 exports.encode = base32.encode;
 exports.decode = base32.decode;
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19647,7 +19747,7 @@ exports.decode = function (encoded) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19701,12 +19801,12 @@ exports._unrefActive = exports.active = function (item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(101);
+__webpack_require__(103);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19717,12 +19817,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 module.exports = Discovery;
 
 var debug = __webpack_require__(5)('torrent-discovery');
-var DHT = __webpack_require__(134 // empty object in browser
+var DHT = __webpack_require__(136 // empty object in browser
 );var EventEmitter = __webpack_require__(6).EventEmitter;
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
 var parallel = __webpack_require__(14);
-var Tracker = __webpack_require__(59);
+var Tracker = __webpack_require__(61);
 
 inherits(Discovery, EventEmitter);
 
@@ -19911,7 +20011,7 @@ Discovery.prototype._dhtAnnounce = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20023,7 +20123,7 @@ Piece.prototype.init = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20038,7 +20138,7 @@ Piece.prototype.init = function () {
  * `npm install typedarray-to-buffer`
  */
 
-var isTypedArray = __webpack_require__(77).strict;
+var isTypedArray = __webpack_require__(79).strict;
 
 module.exports = function typedarrayToBuffer(arr) {
   if (isTypedArray(arr)) {
@@ -20057,7 +20157,7 @@ module.exports = function typedarrayToBuffer(arr) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20098,7 +20198,7 @@ exports.decode.bytes = 8;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20345,7 +20445,7 @@ module.exports = function (metadata) {
 };
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20420,18 +20520,18 @@ function config(name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-var bs = __webpack_require__(58);
+var bs = __webpack_require__(60);
 var EventEmitter = __webpack_require__(6).EventEmitter;
 var inherits = __webpack_require__(1);
-var mp4 = __webpack_require__(85);
+var mp4 = __webpack_require__(87);
 var Box = __webpack_require__(18);
-var RangeSliceStream = __webpack_require__(95);
+var RangeSliceStream = __webpack_require__(97);
 
 module.exports = MP4Remuxer;
 
@@ -20896,7 +20996,7 @@ MP4Remuxer.prototype._generateMoof = function (track, firstSample, lastSample) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20905,7 +21005,7 @@ MP4Remuxer.prototype._generateMoof = function (track, firstSample, lastSample) {
 var MediaElementWrapper = __webpack_require__(34);
 var pump = __webpack_require__(38);
 
-var MP4Remuxer = __webpack_require__(115);
+var MP4Remuxer = __webpack_require__(117);
 
 module.exports = VideoStream;
 
@@ -21028,7 +21128,7 @@ VideoStream.prototype.destroy = function () {
 };
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21058,7 +21158,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21164,7 +21264,7 @@ FileStream.prototype._destroy = function (err, onclose) {
 };
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21174,14 +21274,14 @@ module.exports = File;
 
 var eos = __webpack_require__(32);
 var EventEmitter = __webpack_require__(6).EventEmitter;
-var FileStream = __webpack_require__(118);
+var FileStream = __webpack_require__(120);
 var inherits = __webpack_require__(1);
 var path = __webpack_require__(10);
-var render = __webpack_require__(98);
+var render = __webpack_require__(100);
 var stream = __webpack_require__(3);
 var streamToBlob = __webpack_require__(48);
 var streamToBlobURL = __webpack_require__(47);
-var streamToBuffer = __webpack_require__(105);
+var streamToBuffer = __webpack_require__(107);
 
 inherits(File, EventEmitter);
 
@@ -21296,7 +21396,7 @@ File.prototype._destroy = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21306,7 +21406,7 @@ var arrayRemove = __webpack_require__(50);
 var debug = __webpack_require__(5)('webtorrent:peer');
 var Wire = __webpack_require__(29);
 
-var WebConn = __webpack_require__(123);
+var WebConn = __webpack_require__(125);
 
 var CONNECT_TIMEOUT_TCP = 5000;
 var CONNECT_TIMEOUT_WEBRTC = 25000;
@@ -21553,7 +21653,7 @@ Peer.prototype.destroy = function (err) {
 function noop() {}
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21682,7 +21782,7 @@ function trueFn() {
 }
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21692,39 +21792,39 @@ function trueFn() {
 
 module.exports = Torrent;
 
-var addrToIPPort = __webpack_require__(54);
+var addrToIPPort = __webpack_require__(56);
 var BitField = __webpack_require__(17);
-var ChunkStoreWriteStream = __webpack_require__(64);
+var ChunkStoreWriteStream = __webpack_require__(66);
 var debug = __webpack_require__(5)('webtorrent:torrent');
-var Discovery = __webpack_require__(109);
+var Discovery = __webpack_require__(111);
 var EventEmitter = __webpack_require__(6).EventEmitter;
 var extend = __webpack_require__(7);
 var extendMutable = __webpack_require__(51);
 var fs = __webpack_require__(19);
-var FSChunkStore = __webpack_require__(80 // browser: `memory-chunk-store`
-);var get = __webpack_require__(24);
-var ImmediateChunkStore = __webpack_require__(74);
+var FSChunkStore = __webpack_require__(82 // browser: `memory-chunk-store`
+);var get = __webpack_require__(25);
+var ImmediateChunkStore = __webpack_require__(76);
 var inherits = __webpack_require__(1);
 var MultiStream = __webpack_require__(35);
-var net = __webpack_require__(139 // browser exclude
-);var os = __webpack_require__(140 // browser exclude
+var net = __webpack_require__(141 // browser exclude
+);var os = __webpack_require__(142 // browser exclude
 );var parallel = __webpack_require__(14);
-var parallelLimit = __webpack_require__(99);
+var parallelLimit = __webpack_require__(101);
 var parseTorrent = __webpack_require__(37);
 var path = __webpack_require__(10);
-var Piece = __webpack_require__(110);
+var Piece = __webpack_require__(112);
 var pump = __webpack_require__(38);
-var randomIterate = __webpack_require__(94);
+var randomIterate = __webpack_require__(96);
 var sha1 = __webpack_require__(15);
-var speedometer = __webpack_require__(26);
+var speedometer = __webpack_require__(27);
 var uniq = __webpack_require__(20);
-var utMetadata = __webpack_require__(113);
-var utPex = __webpack_require__(141 // browser exclude
+var utMetadata = __webpack_require__(115);
+var utPex = __webpack_require__(143 // browser exclude
 
-);var File = __webpack_require__(119);
-var Peer = __webpack_require__(120);
-var RarityMap = __webpack_require__(121);
-var Server = __webpack_require__(138 // browser exclude
+);var File = __webpack_require__(121);
+var Peer = __webpack_require__(122);
+var RarityMap = __webpack_require__(123);
+var Server = __webpack_require__(140 // browser exclude
 
 );var MAX_BLOCK_LENGTH = 128 * 1024;
 var PIECE_TIMEOUT = 30000;
@@ -21741,7 +21841,7 @@ var FILESYSTEM_CONCURRENCY = 2;
 
 var RECONNECT_WAIT = [1000, 5000, 15000];
 
-var VERSION = __webpack_require__(27).version;
+var VERSION = __webpack_require__(28).version;
 var USER_AGENT = 'WebTorrent/' + VERSION + ' (https://webtorrent.io)';
 
 var TMP;
@@ -23436,7 +23536,7 @@ function noop() {}
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23447,12 +23547,12 @@ module.exports = WebConn;
 var BitField = __webpack_require__(17);
 var Buffer = __webpack_require__(8).Buffer;
 var debug = __webpack_require__(5)('webtorrent:webconn');
-var get = __webpack_require__(24);
+var get = __webpack_require__(25);
 var inherits = __webpack_require__(1);
 var sha1 = __webpack_require__(15);
 var Wire = __webpack_require__(29);
 
-var VERSION = __webpack_require__(27).version;
+var VERSION = __webpack_require__(28).version;
 
 inherits(WebConn, Wire
 
@@ -23644,7 +23744,7 @@ WebConn.prototype.destroy = function () {
 };
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23684,7 +23784,7 @@ function wrappy(fn, cb) {
 }
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23710,7 +23810,7 @@ module.exports = function zeroFill(width, number, pad) {
 };
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -23796,18 +23896,6 @@ module.exports = {
 };
 
 /***/ }),
-/* 127 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
 /* 129 */
 /***/ (function(module, exports) {
 
@@ -23887,6 +23975,18 @@ module.exports = {
 
 /***/ }),
 /* 142 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 143 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24194,98 +24294,6 @@ EventEmitter.EventEmitter = EventEmitter;
 if (true) {
   module.exports = EventEmitter;
 }
-
-/***/ }),
-/* 143 */,
-/* 144 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MediaStreamRecorder = __webpack_require__(28);
-var WebTorrent = __webpack_require__(53);
-var EventEmitter = __webpack_require__(142);
-
-var defaultOptions = {
-  seconds: 8000,
-  announceList: [],
-  mediaConstraints: {
-    audio: true, // don't forget audio!
-    video: true // don't forget video!
-  }
-};
-
-var Viewer = function (_EventEmitter) {
-  _inherits(Viewer, _EventEmitter);
-
-  function Viewer() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _classCallCheck(this, Viewer);
-
-    var _this = _possibleConstructorReturn(this, (Viewer.__proto__ || Object.getPrototypeOf(Viewer)).call(this));
-
-    _this._webTorrentClient = new WebTorrent();
-    _this._options = Object.assign(defaultOptions, options);
-    return _this;
-  }
-
-  _createClass(Viewer, [{
-    key: 'start',
-    value: function start(magnetURI) {
-      var _this2 = this;
-
-      var opts = {
-        announce: this._options.announceList,
-        dht: false
-      };
-
-      this._webTorrentClient.add(magnetURI, opts, function (torrent) {
-        /* Look for the file that ends in .webm and render it, in the future we can
-         * add additional file types for scaling. E.g other video formats or even VR!
-         */
-
-        var file = torrent.files.find(function (file) {
-          return file.name.endsWith('.webm');
-        });
-
-        torrent.on('download', function (bytes) {
-          console.log('just downloaded: ' + bytes);
-          console.log('total downloaded: ' + torrent.downloaded);
-          console.log('download speed: ' + torrent.downloadSpeed);
-          console.log('progress: ' + torrent.progress);
-        });
-
-        torrent.on('wire', function (wire, addr) {
-          console.log('Connected to peer with address ' + addr);
-        }
-
-        // Stream the file in the browser
-        );file.renderTo(_this2._options.renderTo, {
-          autoplay: true
-        }
-
-        // listens for when torrents are done and appends total downloaded to menu
-        );torrent.on('done', function () {
-          console.log('Torrent done');
-        });
-      });
-    }
-  }]);
-
-  return Viewer;
-}(EventEmitter);
-
-module.exports = Viewer;
 
 /***/ })
 /******/ ]);
