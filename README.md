@@ -1,5 +1,5 @@
 # peerCam
-Cam Sharing over WebTorrent
+Video Sharing over WebRTC
 
 # Getting started
 
