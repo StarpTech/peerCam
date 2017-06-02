@@ -14,7 +14,6 @@ const server = new Server({
     // key (private trackers). Full access to the original HTTP/UDP request parameters
     // are available in `params`.
     console.log('info hash: ', infoHash)
-    console.log('params: ', params)
     cb(null)
   }
 })

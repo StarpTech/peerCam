@@ -33,7 +33,6 @@
     "socket.io-client": "^2.0.2",
     "url": "^0.11.0",
     "util": "^0.10.3",
-    "webrtc-adapter": "^3.4.3",
     "webtorrent": "^0.98.18"
   },
   "devDependencies": {
@@ -42,6 +41,12 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-es2015": "^6.24.1",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "webpack-dev-server": "^2.4.5",
+    "eslint": "3.19.x",
+    "eslint-config-standard": "10.2.x",
+    "eslint-plugin-import": "2.2.x",
+    "eslint-plugin-node": "4.2.x",
+    "eslint-plugin-promise": "3.5.x",
+    "eslint-plugin-standard": "3.0.x"
   }
 }

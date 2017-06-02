@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 55);
+/******/ 	return __webpack_require__(__webpack_require__.s = 144);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,8 +91,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 
-var base64 = __webpack_require__(57);
-var ieee754 = __webpack_require__(75);
+var base64 = __webpack_require__(55);
+var ieee754 = __webpack_require__(73);
 var isArray = __webpack_require__(33);
 
 exports.Buffer = Buffer;
@@ -2058,7 +2058,7 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(42);
 exports.Duplex = __webpack_require__(11);
 exports.Transform = __webpack_require__(41);
-exports.PassThrough = __webpack_require__(98);
+exports.PassThrough = __webpack_require__(96);
 
 /***/ }),
 /* 4 */
@@ -2105,7 +2105,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(69);
+exports = module.exports = __webpack_require__(67);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -2571,7 +2571,7 @@ module.exports = __webpack_require__(0);
 "use strict";
 
 
-var wrappy = __webpack_require__(126);
+var wrappy = __webpack_require__(124);
 module.exports = wrappy(once);
 module.exports.strict = wrappy(onceStrict);
 
@@ -2866,7 +2866,7 @@ var objectKeys = Object.keys || function (obj) {
 module.exports = Duplex;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(24);
+var processNextTick = __webpack_require__(23);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -3145,7 +3145,7 @@ module.exports = function (tasks, cb) {
 "use strict";
 
 
-var Rusha = __webpack_require__(102);
+var Rusha = __webpack_require__(100);
 
 var rusha = new Rusha();
 var scope = typeof window !== 'undefined' ? window : self;
@@ -3216,8 +3216,8 @@ module.exports.sync = sha1sync;
 
 var bencode = module.exports;
 
-bencode.encode = __webpack_require__(59);
-bencode.decode = __webpack_require__(58
+bencode.encode = __webpack_require__(57);
+bencode.decode = __webpack_require__(56
 
 /**
  * Determines the amount of bytes
@@ -3309,9 +3309,9 @@ if (true) module.exports = BitField;
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
 // var assert = require('assert')
-var uint64be = __webpack_require__(114);
+var uint64be = __webpack_require__(112);
 
-var boxes = __webpack_require__(83);
+var boxes = __webpack_require__(81);
 
 var UINT32_MAX = 4294967295;
 
@@ -3612,2245 +3612,6 @@ module.exports = unique;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-// Last time updated: 2016-07-03 8:51:35 AM UTC
-
-// links:
-// Open-Sourced: https://github.com/streamproc/MediaStreamRecorder
-// https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js
-// https://www.WebRTC-Experiment.com/MediaStreamRecorder.js
-// npm install msr
-
-//------------------------------------
-
-// Browsers Support::
-// Chrome (all versions) [ audio/video separately ]
-// Firefox ( >= 29 ) [ audio/video in single webm/mp4 container or only audio in ogg ]
-// Opera (all versions) [ same as chrome ]
-// Android (Chrome) [ only video ]
-// Android (Opera) [ only video ]
-// Android (Firefox) [ only video ]
-// Microsoft Edge (Only Audio & Gif)
-
-//------------------------------------
-// Muaz Khan     - www.MuazKhan.com
-// MIT License   - www.WebRTC-Experiment.com/licence
-//------------------------------------
-
-// ______________________
-// MediaStreamRecorder.js
-
-function MediaStreamRecorder(mediaStream) {
-    if (!mediaStream) {
-        throw 'MediaStream is mandatory.';
-    }
-
-    // void start(optional long timeSlice)
-    // timestamp to fire "ondataavailable"
-    this.start = function (timeSlice) {
-        var Recorder;
-
-        if (typeof MediaRecorder !== 'undefined') {
-            Recorder = MediaRecorderWrapper;
-        } else if (IsChrome || IsOpera || IsEdge) {
-            if (this.mimeType.indexOf('video') !== -1) {
-                Recorder = WhammyRecorder;
-            } else if (this.mimeType.indexOf('audio') !== -1) {
-                Recorder = StereoAudioRecorder;
-            }
-        }
-
-        // video recorder (in GIF format)
-        if (this.mimeType === 'image/gif') {
-            Recorder = GifRecorder;
-        }
-
-        // audio/wav is supported only via StereoAudioRecorder
-        // audio/pcm (int16) is supported only via StereoAudioRecorder
-        if (this.mimeType === 'audio/wav' || this.mimeType === 'audio/pcm') {
-            Recorder = StereoAudioRecorder;
-        }
-
-        // allows forcing StereoAudioRecorder.js on Edge/Firefox
-        if (this.recorderType) {
-            Recorder = this.recorderType;
-        }
-
-        mediaRecorder = new Recorder(mediaStream);
-        mediaRecorder.blobs = [];
-
-        var self = this;
-        mediaRecorder.ondataavailable = function (data) {
-            mediaRecorder.blobs.push(data);
-            self.ondataavailable(data);
-        };
-        mediaRecorder.onstop = this.onstop;
-        mediaRecorder.onStartedDrawingNonBlankFrames = this.onStartedDrawingNonBlankFrames;
-
-        // Merge all data-types except "function"
-        mediaRecorder = mergeProps(mediaRecorder, this);
-
-        mediaRecorder.start(timeSlice);
-    };
-
-    this.onStartedDrawingNonBlankFrames = function () {};
-    this.clearOldRecordedFrames = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        mediaRecorder.clearOldRecordedFrames();
-    };
-
-    this.stop = function () {
-        if (mediaRecorder) {
-            mediaRecorder.stop();
-        }
-    };
-
-    this.ondataavailable = function (blob) {
-        console.log('ondataavailable..', blob);
-    };
-
-    this.onstop = function (error) {
-        console.warn('stopped..', error);
-    };
-
-    this.save = function (file, fileName) {
-        if (!file) {
-            if (!mediaRecorder) {
-                return;
-            }
-
-            ConcatenateBlobs(mediaRecorder.blobs, mediaRecorder.blobs[0].type, function (concatenatedBlob) {
-                invokeSaveAsDialog(concatenatedBlob);
-            });
-            return;
-        }
-        invokeSaveAsDialog(file, fileName);
-    };
-
-    this.pause = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-        mediaRecorder.pause();
-        console.log('Paused recording.', this.mimeType || mediaRecorder.mimeType);
-    };
-
-    this.resume = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-        mediaRecorder.resume();
-        console.log('Resumed recording.', this.mimeType || mediaRecorder.mimeType);
-    };
-
-    // StereoAudioRecorder || WhammyRecorder || MediaRecorderWrapper || GifRecorder
-    this.recorderType = null;
-
-    // video/webm or audio/webm or audio/ogg or audio/wav
-    this.mimeType = 'video/webm';
-
-    // logs are enabled by default
-    this.disableLogs = false;
-
-    // Reference to "MediaRecorder.js"
-    var mediaRecorder;
-}
-
-// ______________________
-// MultiStreamRecorder.js
-
-function MultiStreamRecorder(mediaStream) {
-    if (!mediaStream) {
-        throw 'MediaStream is mandatory.';
-    }
-
-    var self = this;
-    var isMediaRecorder = isMediaRecorderCompatible();
-
-    this.stream = mediaStream;
-
-    // void start(optional long timeSlice)
-    // timestamp to fire "ondataavailable"
-    this.start = function (timeSlice) {
-        audioRecorder = new MediaStreamRecorder(mediaStream);
-        videoRecorder = new MediaStreamRecorder(mediaStream);
-
-        audioRecorder.mimeType = 'audio/ogg';
-        videoRecorder.mimeType = 'video/webm';
-
-        for (var prop in this) {
-            if (typeof this[prop] !== 'function') {
-                audioRecorder[prop] = videoRecorder[prop] = this[prop];
-            }
-        }
-
-        audioRecorder.ondataavailable = function (blob) {
-            if (!audioVideoBlobs[recordingInterval]) {
-                audioVideoBlobs[recordingInterval] = {};
-            }
-
-            audioVideoBlobs[recordingInterval].audio = blob;
-
-            if (audioVideoBlobs[recordingInterval].video && !audioVideoBlobs[recordingInterval].onDataAvailableEventFired) {
-                audioVideoBlobs[recordingInterval].onDataAvailableEventFired = true;
-                fireOnDataAvailableEvent(audioVideoBlobs[recordingInterval]);
-            }
-        };
-
-        videoRecorder.ondataavailable = function (blob) {
-            if (isMediaRecorder) {
-                return self.ondataavailable({
-                    video: blob,
-                    audio: blob
-                });
-            }
-
-            if (!audioVideoBlobs[recordingInterval]) {
-                audioVideoBlobs[recordingInterval] = {};
-            }
-
-            audioVideoBlobs[recordingInterval].video = blob;
-
-            if (audioVideoBlobs[recordingInterval].audio && !audioVideoBlobs[recordingInterval].onDataAvailableEventFired) {
-                audioVideoBlobs[recordingInterval].onDataAvailableEventFired = true;
-                fireOnDataAvailableEvent(audioVideoBlobs[recordingInterval]);
-            }
-        };
-
-        function fireOnDataAvailableEvent(blobs) {
-            recordingInterval++;
-            self.ondataavailable(blobs);
-        }
-
-        videoRecorder.onstop = audioRecorder.onstop = function (error) {
-            self.onstop(error);
-        };
-
-        if (!isMediaRecorder) {
-            // to make sure both audio/video are synced.
-            videoRecorder.onStartedDrawingNonBlankFrames = function () {
-                videoRecorder.clearOldRecordedFrames();
-                audioRecorder.start(timeSlice);
-            };
-            videoRecorder.start(timeSlice);
-        } else {
-            videoRecorder.start(timeSlice);
-        }
-    };
-
-    this.stop = function () {
-        if (audioRecorder) {
-            audioRecorder.stop();
-        }
-        if (videoRecorder) {
-            videoRecorder.stop();
-        }
-    };
-
-    this.ondataavailable = function (blob) {
-        console.log('ondataavailable..', blob);
-    };
-
-    this.onstop = function (error) {
-        console.warn('stopped..', error);
-    };
-
-    this.pause = function () {
-        if (audioRecorder) {
-            audioRecorder.pause();
-        }
-        if (videoRecorder) {
-            videoRecorder.pause();
-        }
-    };
-
-    this.resume = function () {
-        if (audioRecorder) {
-            audioRecorder.resume();
-        }
-        if (videoRecorder) {
-            videoRecorder.resume();
-        }
-    };
-
-    var audioRecorder;
-    var videoRecorder;
-
-    var audioVideoBlobs = {};
-    var recordingInterval = 0;
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.MultiStreamRecorder = MultiStreamRecorder;
-}
-
-// _____________________________
-// Cross-Browser-Declarations.js
-
-var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
-
-(function (that) {
-    if (typeof window !== 'undefined') {
-        return;
-    }
-
-    if (typeof window === 'undefined' && typeof global !== 'undefined') {
-        global.navigator = {
-            userAgent: browserFakeUserAgent,
-            getUserMedia: function getUserMedia() {}
-        };
-
-        /*global window:true */
-        that.window = global;
-    } else if (typeof window === 'undefined') {
-        // window = this;
-    }
-
-    if (typeof document === 'undefined') {
-        /*global document:true */
-        that.document = {};
-
-        document.createElement = document.captureStream = document.mozCaptureStream = function () {
-            return {};
-        };
-    }
-
-    if (typeof location === 'undefined') {
-        /*global location:true */
-        that.location = {
-            protocol: 'file:',
-            href: '',
-            hash: ''
-        };
-    }
-
-    if (typeof screen === 'undefined') {
-        /*global screen:true */
-        that.screen = {
-            width: 0,
-            height: 0
-        };
-    }
-})(typeof global !== 'undefined' ? global : window);
-
-// WebAudio API representer
-var AudioContext = window.AudioContext;
-
-if (typeof AudioContext === 'undefined') {
-    if (typeof webkitAudioContext !== 'undefined') {
-        /*global AudioContext:true */
-        AudioContext = webkitAudioContext;
-    }
-
-    if (typeof mozAudioContext !== 'undefined') {
-        /*global AudioContext:true */
-        AudioContext = mozAudioContext;
-    }
-}
-
-if (typeof window === 'undefined') {
-    /*jshint -W020 */
-    window = {};
-}
-
-// WebAudio API representer
-var AudioContext = window.AudioContext;
-
-if (typeof AudioContext === 'undefined') {
-    if (typeof webkitAudioContext !== 'undefined') {
-        /*global AudioContext:true */
-        AudioContext = webkitAudioContext;
-    }
-
-    if (typeof mozAudioContext !== 'undefined') {
-        /*global AudioContext:true */
-        AudioContext = mozAudioContext;
-    }
-}
-
-/*jshint -W079 */
-var URL = window.URL;
-
-if (typeof URL === 'undefined' && typeof webkitURL !== 'undefined') {
-    /*global URL:true */
-    URL = webkitURL;
-}
-
-if (typeof navigator !== 'undefined') {
-    if (typeof navigator.webkitGetUserMedia !== 'undefined') {
-        navigator.getUserMedia = navigator.webkitGetUserMedia;
-    }
-
-    if (typeof navigator.mozGetUserMedia !== 'undefined') {
-        navigator.getUserMedia = navigator.mozGetUserMedia;
-    }
-} else {
-    navigator = {
-        getUserMedia: function getUserMedia() {},
-        userAgent: browserFakeUserAgent
-    };
-}
-
-var IsEdge = navigator.userAgent.indexOf('Edge') !== -1 && (!!navigator.msSaveBlob || !!navigator.msSaveOrOpenBlob);
-
-var IsOpera = false;
-if (typeof opera !== 'undefined' && navigator.userAgent && navigator.userAgent.indexOf('OPR/') !== -1) {
-    IsOpera = true;
-}
-var IsChrome = !IsEdge && !IsEdge && !!navigator.webkitGetUserMedia;
-
-var MediaStream = window.MediaStream;
-
-if (typeof MediaStream === 'undefined' && typeof webkitMediaStream !== 'undefined') {
-    MediaStream = webkitMediaStream;
-}
-
-/*global MediaStream:true */
-if (typeof MediaStream !== 'undefined') {
-    if (!('getVideoTracks' in MediaStream.prototype)) {
-        MediaStream.prototype.getVideoTracks = function () {
-            if (!this.getTracks) {
-                return [];
-            }
-
-            var tracks = [];
-            this.getTracks.forEach(function (track) {
-                if (track.kind.toString().indexOf('video') !== -1) {
-                    tracks.push(track);
-                }
-            });
-            return tracks;
-        };
-
-        MediaStream.prototype.getAudioTracks = function () {
-            if (!this.getTracks) {
-                return [];
-            }
-
-            var tracks = [];
-            this.getTracks.forEach(function (track) {
-                if (track.kind.toString().indexOf('audio') !== -1) {
-                    tracks.push(track);
-                }
-            });
-            return tracks;
-        };
-    }
-
-    if (!('stop' in MediaStream.prototype)) {
-        MediaStream.prototype.stop = function () {
-            this.getAudioTracks().forEach(function (track) {
-                if (!!track.stop) {
-                    track.stop();
-                }
-            });
-
-            this.getVideoTracks().forEach(function (track) {
-                if (!!track.stop) {
-                    track.stop();
-                }
-            });
-        };
-    }
-}
-
-if (typeof location !== 'undefined') {
-    if (location.href.indexOf('file:') === 0) {
-        console.error('Please load this HTML file on HTTP or HTTPS.');
-    }
-}
-
-// Merge all other data-types except "function"
-
-function mergeProps(mergein, mergeto) {
-    for (var t in mergeto) {
-        if (typeof mergeto[t] !== 'function') {
-            mergein[t] = mergeto[t];
-        }
-    }
-    return mergein;
-}
-
-// "dropFirstFrame" has been added by Graham Roth
-// https://github.com/gsroth
-
-function dropFirstFrame(arr) {
-    arr.shift();
-    return arr;
-}
-
-/**
- * @param {Blob} file - File or Blob object. This parameter is required.
- * @param {string} fileName - Optional file name e.g. "Recorded-Video.webm"
- * @example
- * invokeSaveAsDialog(blob or file, [optional] fileName);
- * @see {@link https://github.com/muaz-khan/RecordRTC|RecordRTC Source Code}
- */
-function invokeSaveAsDialog(file, fileName) {
-    if (!file) {
-        throw 'Blob object is required.';
-    }
-
-    if (!file.type) {
-        try {
-            file.type = 'video/webm';
-        } catch (e) {}
-    }
-
-    var fileExtension = (file.type || 'video/webm').split('/')[1];
-
-    if (fileName && fileName.indexOf('.') !== -1) {
-        var splitted = fileName.split('.');
-        fileName = splitted[0];
-        fileExtension = splitted[1];
-    }
-
-    var fileFullName = (fileName || Math.round(Math.random() * 9999999999) + 888888888) + '.' + fileExtension;
-
-    if (typeof navigator.msSaveOrOpenBlob !== 'undefined') {
-        return navigator.msSaveOrOpenBlob(file, fileFullName);
-    } else if (typeof navigator.msSaveBlob !== 'undefined') {
-        return navigator.msSaveBlob(file, fileFullName);
-    }
-
-    var hyperlink = document.createElement('a');
-    hyperlink.href = URL.createObjectURL(file);
-    hyperlink.target = '_blank';
-    hyperlink.download = fileFullName;
-
-    if (!!navigator.mozGetUserMedia) {
-        hyperlink.onclick = function () {
-            (document.body || document.documentElement).removeChild(hyperlink);
-        };
-        (document.body || document.documentElement).appendChild(hyperlink);
-    }
-
-    var evt = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-    });
-
-    hyperlink.dispatchEvent(evt);
-
-    if (!navigator.mozGetUserMedia) {
-        URL.revokeObjectURL(hyperlink.href);
-    }
-}
-
-function bytesToSize(bytes) {
-    var k = 1000;
-    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) {
-        return '0 Bytes';
-    }
-    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
-    return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
-}
-
-// ______________ (used to handle stuff like http://goo.gl/xmE5eg) issue #129
-// ObjectStore.js
-var ObjectStore = {
-    AudioContext: AudioContext
-};
-
-function isMediaRecorderCompatible() {
-    var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-    var isChrome = !!window.chrome && !isOpera;
-    var isFirefox = typeof window.InstallTrigger !== 'undefined';
-
-    if (isFirefox) {
-        return true;
-    }
-
-    if (!isChrome) {
-        return false;
-    }
-
-    var nVer = navigator.appVersion;
-    var nAgt = navigator.userAgent;
-    var fullVersion = '' + parseFloat(navigator.appVersion);
-    var majorVersion = parseInt(navigator.appVersion, 10);
-    var nameOffset, verOffset, ix;
-
-    if (isChrome) {
-        verOffset = nAgt.indexOf('Chrome');
-        fullVersion = nAgt.substring(verOffset + 7);
-    }
-
-    // trim the fullVersion string at semicolon/space if present
-    if ((ix = fullVersion.indexOf(';')) !== -1) {
-        fullVersion = fullVersion.substring(0, ix);
-    }
-
-    if ((ix = fullVersion.indexOf(' ')) !== -1) {
-        fullVersion = fullVersion.substring(0, ix);
-    }
-
-    majorVersion = parseInt('' + fullVersion, 10);
-
-    if (isNaN(majorVersion)) {
-        fullVersion = '' + parseFloat(navigator.appVersion);
-        majorVersion = parseInt(navigator.appVersion, 10);
-    }
-
-    return majorVersion >= 49;
-}
-
-// ______________ (used to handle stuff like http://goo.gl/xmE5eg) issue #129
-// ObjectStore.js
-var ObjectStore = {
-    AudioContext: window.AudioContext || window.webkitAudioContext
-};
-
-// ==================
-// MediaRecorder.js
-
-/**
- * Implementation of https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html
- * The MediaRecorder accepts a mediaStream as input source passed from UA. When recorder starts,
- * a MediaEncoder will be created and accept the mediaStream as input source.
- * Encoder will get the raw data by track data changes, encode it by selected MIME Type, then store the encoded in EncodedBufferCache object.
- * The encoded data will be extracted on every timeslice passed from Start function call or by RequestData function.
- * Thread model:
- * When the recorder starts, it creates a "Media Encoder" thread to read data from MediaEncoder object and store buffer in EncodedBufferCache object.
- * Also extract the encoded data and create blobs on every timeslice passed from start function or RequestData function called by UA.
- */
-
-function MediaRecorderWrapper(mediaStream) {
-    var self = this;
-
-    /**
-     * This method records MediaStream.
-     * @method
-     * @memberof MediaStreamRecorder
-     * @example
-     * recorder.record();
-     */
-    this.start = function (timeSlice, __disableLogs) {
-        if (!self.mimeType) {
-            self.mimeType = 'video/webm';
-        }
-
-        if (self.mimeType.indexOf('audio') !== -1) {
-            if (mediaStream.getVideoTracks().length && mediaStream.getAudioTracks().length) {
-                var stream;
-                if (!!navigator.mozGetUserMedia) {
-                    stream = new MediaStream();
-                    stream.addTrack(mediaStream.getAudioTracks()[0]);
-                } else {
-                    // webkitMediaStream
-                    stream = new MediaStream(mediaStream.getAudioTracks());
-                }
-                mediaStream = stream;
-            }
-        }
-
-        if (self.mimeType.indexOf('audio') !== -1) {
-            self.mimeType = IsChrome ? 'audio/webm' : 'audio/ogg';
-        }
-
-        self.dontFireOnDataAvailableEvent = false;
-
-        var recorderHints = {
-            mimeType: self.mimeType
-        };
-
-        if (!self.disableLogs && !__disableLogs) {
-            console.log('Passing following params over MediaRecorder API.', recorderHints);
-        }
-
-        if (mediaRecorder) {
-            // mandatory to make sure Firefox doesn't fails to record streams 3-4 times without reloading the page.
-            mediaRecorder = null;
-        }
-
-        if (IsChrome && !isMediaRecorderCompatible()) {
-            // to support video-only recording on stable
-            recorderHints = 'video/vp8';
-        }
-
-        // http://dxr.mozilla.org/mozilla-central/source/content/media/MediaRecorder.cpp
-        // https://wiki.mozilla.org/Gecko:MediaRecorder
-        // https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html
-
-        // starting a recording session; which will initiate "Reading Thread"
-        // "Reading Thread" are used to prevent main-thread blocking scenarios
-        try {
-            mediaRecorder = new MediaRecorder(mediaStream, recorderHints);
-        } catch (e) {
-            // if someone passed NON_supported mimeType
-            // or if Firefox on Android
-            mediaRecorder = new MediaRecorder(mediaStream);
-        }
-
-        if ('canRecordMimeType' in mediaRecorder && mediaRecorder.canRecordMimeType(self.mimeType) === false) {
-            if (!self.disableLogs) {
-                console.warn('MediaRecorder API seems unable to record mimeType:', self.mimeType);
-            }
-        }
-
-        // i.e. stop recording when <video> is paused by the user; and auto restart recording 
-        // when video is resumed. E.g. yourStream.getVideoTracks()[0].muted = true; // it will auto-stop recording.
-        mediaRecorder.ignoreMutedMedia = self.ignoreMutedMedia || false;
-
-        var firedOnDataAvailableOnce = false;
-
-        // Dispatching OnDataAvailable Handler
-        mediaRecorder.ondataavailable = function (e) {
-            if (self.dontFireOnDataAvailableEvent) {
-                return;
-            }
-
-            // how to fix FF-corrupt-webm issues?
-            // should we leave this?          e.data.size < 26800
-            if (!e.data || !e.data.size || e.data.size < 26800 || firedOnDataAvailableOnce) {
-                return;
-            }
-
-            firedOnDataAvailableOnce = true;
-
-            var blob = self.getNativeBlob ? e.data : new Blob([e.data], {
-                type: self.mimeType || 'video/webm'
-            });
-
-            self.ondataavailable(blob);
-
-            self.dontFireOnDataAvailableEvent = true;
-
-            if (!!mediaRecorder) {
-                mediaRecorder.stop();
-                mediaRecorder = null;
-            }
-
-            // record next interval
-            self.start(timeSlice, '__disableLogs');
-        };
-
-        mediaRecorder.onerror = function (error) {
-            if (!self.disableLogs) {
-                if (error.name === 'InvalidState') {
-                    console.error('The MediaRecorder is not in a state in which the proposed operation is allowed to be executed.');
-                } else if (error.name === 'OutOfMemory') {
-                    console.error('The UA has exhaused the available memory. User agents SHOULD provide as much additional information as possible in the message attribute.');
-                } else if (error.name === 'IllegalStreamModification') {
-                    console.error('A modification to the stream has occurred that makes it impossible to continue recording. An example would be the addition of a Track while recording is occurring. User agents SHOULD provide as much additional information as possible in the message attribute.');
-                } else if (error.name === 'OtherRecordingError') {
-                    console.error('Used for an fatal error other than those listed above. User agents SHOULD provide as much additional information as possible in the message attribute.');
-                } else if (error.name === 'GenericError') {
-                    console.error('The UA cannot provide the codec or recording option that has been requested.', error);
-                } else {
-                    console.error('MediaRecorder Error', error);
-                }
-            }
-
-            // When the stream is "ended" set recording to 'inactive' 
-            // and stop gathering data. Callers should not rely on 
-            // exactness of the timeSlice value, especially 
-            // if the timeSlice value is small. Callers should 
-            // consider timeSlice as a minimum value
-
-            if (!!mediaRecorder && mediaRecorder.state !== 'inactive' && mediaRecorder.state !== 'stopped') {
-                mediaRecorder.stop();
-            }
-        };
-
-        // void start(optional long mTimeSlice)
-        // The interval of passing encoded data from EncodedBufferCache to onDataAvailable
-        // handler. "mTimeSlice < 0" means Session object does not push encoded data to
-        // onDataAvailable, instead, it passive wait the client side pull encoded data
-        // by calling requestData API.
-        try {
-            mediaRecorder.start(3.6e+6);
-        } catch (e) {
-            mediaRecorder = null;
-        }
-
-        setTimeout(function () {
-            if (!mediaRecorder) {
-                return;
-            }
-
-            if (mediaRecorder.state === 'recording') {
-                // "stop" method auto invokes "requestData"!
-                mediaRecorder.requestData();
-                // mediaRecorder.stop();
-            }
-        }, timeSlice);
-
-        // Start recording. If timeSlice has been provided, mediaRecorder will
-        // raise a dataavailable event containing the Blob of collected data on every timeSlice milliseconds.
-        // If timeSlice isn't provided, UA should call the RequestData to obtain the Blob data, also set the mTimeSlice to zero.
-    };
-
-    /**
-     * This method stops recording MediaStream.
-     * @param {function} callback - Callback function, that is used to pass recorded blob back to the callee.
-     * @method
-     * @memberof MediaStreamRecorder
-     * @example
-     * recorder.stop(function(blob) {
-     *     video.src = URL.createObjectURL(blob);
-     * });
-     */
-    this.stop = function (callback) {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        // mediaRecorder.state === 'recording' means that media recorder is associated with "session"
-        // mediaRecorder.state === 'stopped' means that media recorder is detached from the "session" ... in this case; "session" will also be deleted.
-
-        if (mediaRecorder.state === 'recording') {
-            // "stop" method auto invokes "requestData"!
-            mediaRecorder.requestData();
-
-            setTimeout(function () {
-                self.dontFireOnDataAvailableEvent = true;
-                if (!!mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
-                mediaRecorder = null;
-            }, 2000);
-        }
-    };
-
-    /**
-     * This method pauses the recording process.
-     * @method
-     * @memberof MediaStreamRecorder
-     * @example
-     * recorder.pause();
-     */
-    this.pause = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        if (mediaRecorder.state === 'recording') {
-            mediaRecorder.pause();
-        }
-    };
-
-    /**
-     * The recorded blobs are passed over this event.
-     * @event
-     * @memberof MediaStreamRecorder
-     * @example
-     * recorder.ondataavailable = function(data) {};
-     */
-    this.ondataavailable = function (blob) {
-        console.log('recorded-blob', blob);
-    };
-
-    /**
-     * This method resumes the recording process.
-     * @method
-     * @memberof MediaStreamRecorder
-     * @example
-     * recorder.resume();
-     */
-    this.resume = function () {
-        if (this.dontFireOnDataAvailableEvent) {
-            this.dontFireOnDataAvailableEvent = false;
-
-            var disableLogs = self.disableLogs;
-            self.disableLogs = true;
-            this.record();
-            self.disableLogs = disableLogs;
-            return;
-        }
-
-        if (!mediaRecorder) {
-            return;
-        }
-
-        if (mediaRecorder.state === 'paused') {
-            mediaRecorder.resume();
-        }
-    };
-
-    /**
-     * This method resets currently recorded data.
-     * @method
-     * @memberof MediaStreamRecorder
-     * @example
-     * recorder.clearRecordedData();
-     */
-    this.clearRecordedData = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        this.pause();
-
-        this.dontFireOnDataAvailableEvent = true;
-        this.stop();
-    };
-
-    // Reference to "MediaRecorder" object
-    var mediaRecorder;
-
-    function isMediaStreamActive() {
-        if ('active' in mediaStream) {
-            if (!mediaStream.active) {
-                return false;
-            }
-        } else if ('ended' in mediaStream) {
-            // old hack
-            if (mediaStream.ended) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // this method checks if media stream is stopped
-    // or any track is ended.
-    (function looper() {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        if (isMediaStreamActive() === false) {
-            self.stop();
-            return;
-        }
-
-        setTimeout(looper, 1000); // check every second
-    })();
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.MediaRecorderWrapper = MediaRecorderWrapper;
-}
-
-// ======================
-// StereoAudioRecorder.js
-
-function StereoAudioRecorder(mediaStream) {
-    // void start(optional long timeSlice)
-    // timestamp to fire "ondataavailable"
-    this.start = function (timeSlice) {
-        timeSlice = timeSlice || 1000;
-
-        mediaRecorder = new StereoAudioRecorderHelper(mediaStream, this);
-
-        mediaRecorder.record();
-
-        timeout = setInterval(function () {
-            mediaRecorder.requestData();
-        }, timeSlice);
-    };
-
-    this.stop = function () {
-        if (mediaRecorder) {
-            mediaRecorder.stop();
-            clearTimeout(timeout);
-        }
-    };
-
-    this.pause = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        mediaRecorder.pause();
-    };
-
-    this.resume = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        mediaRecorder.resume();
-    };
-
-    this.ondataavailable = function () {};
-
-    // Reference to "StereoAudioRecorder" object
-    var mediaRecorder;
-    var timeout;
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.StereoAudioRecorder = StereoAudioRecorder;
-}
-
-// ============================
-// StereoAudioRecorderHelper.js
-
-// source code from: http://typedarray.org/wp-content/projects/WebAudioRecorder/script.js
-
-function StereoAudioRecorderHelper(mediaStream, root) {
-
-    // variables    
-    var deviceSampleRate = 44100; // range: 22050 to 96000
-
-    if (!ObjectStore.AudioContextConstructor) {
-        ObjectStore.AudioContextConstructor = new ObjectStore.AudioContext();
-    }
-
-    // check device sample rate
-    deviceSampleRate = ObjectStore.AudioContextConstructor.sampleRate;
-
-    var leftchannel = [];
-    var rightchannel = [];
-    var scriptprocessornode;
-    var recording = false;
-    var recordingLength = 0;
-    var volume;
-    var audioInput;
-    var sampleRate = root.sampleRate || deviceSampleRate;
-
-    var mimeType = root.mimeType || 'audio/wav';
-    var isPCM = mimeType.indexOf('audio/pcm') > -1;
-
-    var context;
-
-    var numChannels = root.audioChannels || 2;
-
-    this.record = function () {
-        recording = true;
-        // reset the buffers for the new recording
-        leftchannel.length = rightchannel.length = 0;
-        recordingLength = 0;
-    };
-
-    this.requestData = function () {
-        if (isPaused) {
-            return;
-        }
-
-        if (recordingLength === 0) {
-            requestDataInvoked = false;
-            return;
-        }
-
-        requestDataInvoked = true;
-        // clone stuff
-        var internalLeftChannel = leftchannel.slice(0);
-        var internalRightChannel = rightchannel.slice(0);
-        var internalRecordingLength = recordingLength;
-
-        // reset the buffers for the new recording
-        leftchannel.length = rightchannel.length = [];
-        recordingLength = 0;
-        requestDataInvoked = false;
-
-        // we flat the left and right channels down
-        var leftBuffer = mergeBuffers(internalLeftChannel, internalRecordingLength);
-
-        var interleaved = leftBuffer;
-
-        // we interleave both channels together
-        if (numChannels === 2) {
-            var rightBuffer = mergeBuffers(internalRightChannel, internalRecordingLength); // bug fixed via #70,#71
-            interleaved = interleave(leftBuffer, rightBuffer);
-        }
-
-        if (isPCM) {
-            // our final binary blob
-            var blob = new Blob([convertoFloat32ToInt16(interleaved)], {
-                type: 'audio/pcm'
-            });
-
-            console.debug('audio recorded blob size:', bytesToSize(blob.size));
-            root.ondataavailable(blob);
-            return;
-        }
-
-        // we create our wav file
-        var buffer = new ArrayBuffer(44 + interleaved.length * 2);
-        var view = new DataView(buffer);
-
-        // RIFF chunk descriptor
-        writeUTFBytes(view, 0, 'RIFF');
-
-        // -8 (via #97)
-        view.setUint32(4, 44 + interleaved.length * 2 - 8, true);
-
-        writeUTFBytes(view, 8, 'WAVE');
-        // FMT sub-chunk
-        writeUTFBytes(view, 12, 'fmt ');
-        view.setUint32(16, 16, true);
-        view.setUint16(20, 1, true);
-        // stereo (2 channels)
-        view.setUint16(22, numChannels, true);
-        view.setUint32(24, sampleRate, true);
-        view.setUint32(28, sampleRate * numChannels * 2, true); // numChannels * 2 (via #71)
-        view.setUint16(32, numChannels * 2, true);
-        view.setUint16(34, 16, true);
-        // data sub-chunk
-        writeUTFBytes(view, 36, 'data');
-        view.setUint32(40, interleaved.length * 2, true);
-
-        // write the PCM samples
-        var lng = interleaved.length;
-        var index = 44;
-        var volume = 1;
-        for (var i = 0; i < lng; i++) {
-            view.setInt16(index, interleaved[i] * (0x7FFF * volume), true);
-            index += 2;
-        }
-
-        // our final binary blob
-        var blob = new Blob([view], {
-            type: 'audio/wav'
-        });
-
-        console.debug('audio recorded blob size:', bytesToSize(blob.size));
-
-        root.ondataavailable(blob);
-    };
-
-    this.stop = function () {
-        // we stop recording
-        recording = false;
-        this.requestData();
-
-        audioInput.disconnect();
-    };
-
-    function interleave(leftChannel, rightChannel) {
-        var length = leftChannel.length + rightChannel.length;
-        var result = new Float32Array(length);
-
-        var inputIndex = 0;
-
-        for (var index = 0; index < length;) {
-            result[index++] = leftChannel[inputIndex];
-            result[index++] = rightChannel[inputIndex];
-            inputIndex++;
-        }
-        return result;
-    }
-
-    function mergeBuffers(channelBuffer, recordingLength) {
-        var result = new Float32Array(recordingLength);
-        var offset = 0;
-        var lng = channelBuffer.length;
-        for (var i = 0; i < lng; i++) {
-            var buffer = channelBuffer[i];
-            result.set(buffer, offset);
-            offset += buffer.length;
-        }
-        return result;
-    }
-
-    function writeUTFBytes(view, offset, string) {
-        var lng = string.length;
-        for (var i = 0; i < lng; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-
-    function convertoFloat32ToInt16(buffer) {
-        var l = buffer.length;
-        var buf = new Int16Array(l);
-
-        while (l--) {
-            buf[l] = buffer[l] * 0xFFFF; //convert to 16 bit
-        }
-        return buf.buffer;
-    }
-
-    // creates the audio context
-    var context = ObjectStore.AudioContextConstructor;
-
-    // creates a gain node
-    ObjectStore.VolumeGainNode = context.createGain();
-
-    var volume = ObjectStore.VolumeGainNode;
-
-    // creates an audio node from the microphone incoming stream
-    ObjectStore.AudioInput = context.createMediaStreamSource(mediaStream);
-
-    // creates an audio node from the microphone incoming stream
-    var audioInput = ObjectStore.AudioInput;
-
-    // connect the stream to the gain node
-    audioInput.connect(volume);
-
-    /* From the spec: This value controls how frequently the audioprocess event is
-    dispatched and how many sample-frames need to be processed each call.
-    Lower values for buffer size will result in a lower (better) latency.
-    Higher values will be necessary to avoid audio breakup and glitches 
-    Legal values are 256, 512, 1024, 2048, 4096, 8192, and 16384.*/
-    var bufferSize = root.bufferSize || 2048;
-    if (root.bufferSize === 0) {
-        bufferSize = 0;
-    }
-
-    if (context.createJavaScriptNode) {
-        scriptprocessornode = context.createJavaScriptNode(bufferSize, numChannels, numChannels);
-    } else if (context.createScriptProcessor) {
-        scriptprocessornode = context.createScriptProcessor(bufferSize, numChannels, numChannels);
-    } else {
-        throw 'WebAudio API has no support on this browser.';
-    }
-
-    bufferSize = scriptprocessornode.bufferSize;
-
-    console.debug('using audio buffer-size:', bufferSize);
-
-    var requestDataInvoked = false;
-
-    // sometimes "scriptprocessornode" disconnects from he destination-node
-    // and there is no exception thrown in this case.
-    // and obviously no further "ondataavailable" events will be emitted.
-    // below global-scope variable is added to debug such unexpected but "rare" cases.
-    window.scriptprocessornode = scriptprocessornode;
-
-    if (numChannels === 1) {
-        console.debug('All right-channels are skipped.');
-    }
-
-    var isPaused = false;
-
-    this.pause = function () {
-        isPaused = true;
-    };
-
-    this.resume = function () {
-        isPaused = false;
-    };
-
-    // http://webaudio.github.io/web-audio-api/#the-scriptprocessornode-interface
-    scriptprocessornode.onaudioprocess = function (e) {
-        if (!recording || requestDataInvoked || isPaused) {
-            return;
-        }
-
-        var left = e.inputBuffer.getChannelData(0);
-        leftchannel.push(new Float32Array(left));
-
-        if (numChannels === 2) {
-            var right = e.inputBuffer.getChannelData(1);
-            rightchannel.push(new Float32Array(right));
-        }
-        recordingLength += bufferSize;
-    };
-
-    volume.connect(scriptprocessornode);
-    scriptprocessornode.connect(context.destination);
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.StereoAudioRecorderHelper = StereoAudioRecorderHelper;
-}
-
-// ===================
-// WhammyRecorder.js
-
-function WhammyRecorder(mediaStream) {
-    // void start(optional long timeSlice)
-    // timestamp to fire "ondataavailable"
-    this.start = function (timeSlice) {
-        timeSlice = timeSlice || 1000;
-
-        mediaRecorder = new WhammyRecorderHelper(mediaStream, this);
-
-        for (var prop in this) {
-            if (typeof this[prop] !== 'function') {
-                mediaRecorder[prop] = this[prop];
-            }
-        }
-
-        mediaRecorder.record();
-
-        timeout = setInterval(function () {
-            mediaRecorder.requestData();
-        }, timeSlice);
-    };
-
-    this.stop = function () {
-        if (mediaRecorder) {
-            mediaRecorder.stop();
-            clearTimeout(timeout);
-        }
-    };
-
-    this.clearOldRecordedFrames = function () {
-        if (mediaRecorder) {
-            mediaRecorder.clearOldRecordedFrames();
-        }
-    };
-
-    this.pause = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        mediaRecorder.pause();
-    };
-
-    this.resume = function () {
-        if (!mediaRecorder) {
-            return;
-        }
-
-        mediaRecorder.resume();
-    };
-
-    this.ondataavailable = function () {};
-
-    // Reference to "WhammyRecorder" object
-    var mediaRecorder;
-    var timeout;
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.WhammyRecorder = WhammyRecorder;
-}
-
-// ==========================
-// WhammyRecorderHelper.js
-
-function WhammyRecorderHelper(mediaStream, root) {
-    this.record = function (timeSlice) {
-        if (!this.width) {
-            this.width = 320;
-        }
-        if (!this.height) {
-            this.height = 240;
-        }
-
-        if (this.video && this.video instanceof HTMLVideoElement) {
-            if (!this.width) {
-                this.width = video.videoWidth || video.clientWidth || 320;
-            }
-            if (!this.height) {
-                this.height = video.videoHeight || video.clientHeight || 240;
-            }
-        }
-
-        if (!this.video) {
-            this.video = {
-                width: this.width,
-                height: this.height
-            };
-        }
-
-        if (!this.canvas || !this.canvas.width || !this.canvas.height) {
-            this.canvas = {
-                width: this.width,
-                height: this.height
-            };
-        }
-
-        canvas.width = this.canvas.width;
-        canvas.height = this.canvas.height;
-
-        // setting defaults
-        if (this.video && this.video instanceof HTMLVideoElement) {
-            this.isHTMLObject = true;
-            video = this.video.cloneNode();
-        } else {
-            video = document.createElement('video');
-            video.src = URL.createObjectURL(mediaStream);
-
-            video.width = this.video.width;
-            video.height = this.video.height;
-        }
-
-        video.muted = true;
-        video.play();
-
-        lastTime = new Date().getTime();
-        whammy = new Whammy.Video(root.speed, root.quality);
-
-        console.log('canvas resolutions', canvas.width, '*', canvas.height);
-        console.log('video width/height', video.width || canvas.width, '*', video.height || canvas.height);
-
-        drawFrames();
-    };
-
-    this.clearOldRecordedFrames = function () {
-        whammy.frames = [];
-    };
-
-    var requestDataInvoked = false;
-    this.requestData = function () {
-        if (isPaused) {
-            return;
-        }
-
-        if (!whammy.frames.length) {
-            requestDataInvoked = false;
-            return;
-        }
-
-        requestDataInvoked = true;
-        // clone stuff
-        var internalFrames = whammy.frames.slice(0);
-
-        // reset the frames for the new recording
-
-        whammy.frames = dropBlackFrames(internalFrames, -1);
-
-        whammy.compile(function (whammyBlob) {
-            root.ondataavailable(whammyBlob);
-            console.debug('video recorded blob size:', bytesToSize(whammyBlob.size));
-        });
-
-        whammy.frames = [];
-
-        requestDataInvoked = false;
-    };
-
-    var isOnStartedDrawingNonBlankFramesInvoked = false;
-
-    function drawFrames() {
-        if (isPaused) {
-            lastTime = new Date().getTime();
-            setTimeout(drawFrames, 500);
-            return;
-        }
-
-        if (isStopDrawing) {
-            return;
-        }
-
-        if (requestDataInvoked) {
-            return setTimeout(drawFrames, 100);
-        }
-
-        var duration = new Date().getTime() - lastTime;
-        if (!duration) {
-            return drawFrames();
-        }
-
-        // via webrtc-experiment#206, by Jack i.e. @Seymourr
-        lastTime = new Date().getTime();
-
-        if (!self.isHTMLObject && video.paused) {
-            video.play(); // Android
-        }
-
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        if (!isStopDrawing) {
-            whammy.frames.push({
-                duration: duration,
-                image: canvas.toDataURL('image/webp')
-            });
-        }
-
-        if (!isOnStartedDrawingNonBlankFramesInvoked && !isBlankFrame(whammy.frames[whammy.frames.length - 1])) {
-            isOnStartedDrawingNonBlankFramesInvoked = true;
-            root.onStartedDrawingNonBlankFrames();
-        }
-
-        setTimeout(drawFrames, 10);
-    }
-
-    var isStopDrawing = false;
-
-    this.stop = function () {
-        isStopDrawing = true;
-        this.requestData();
-    };
-
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-
-    var video;
-    var lastTime;
-    var whammy;
-
-    var self = this;
-
-    function isBlankFrame(frame, _pixTolerance, _frameTolerance) {
-        var localCanvas = document.createElement('canvas');
-        localCanvas.width = canvas.width;
-        localCanvas.height = canvas.height;
-        var context2d = localCanvas.getContext('2d');
-
-        var sampleColor = {
-            r: 0,
-            g: 0,
-            b: 0
-        };
-        var maxColorDifference = Math.sqrt(Math.pow(255, 2) + Math.pow(255, 2) + Math.pow(255, 2));
-        var pixTolerance = _pixTolerance && _pixTolerance >= 0 && _pixTolerance <= 1 ? _pixTolerance : 0;
-        var frameTolerance = _frameTolerance && _frameTolerance >= 0 && _frameTolerance <= 1 ? _frameTolerance : 0;
-
-        var matchPixCount, endPixCheck, maxPixCount;
-
-        var image = new Image();
-        image.src = frame.image;
-        context2d.drawImage(image, 0, 0, canvas.width, canvas.height);
-        var imageData = context2d.getImageData(0, 0, canvas.width, canvas.height);
-        matchPixCount = 0;
-        endPixCheck = imageData.data.length;
-        maxPixCount = imageData.data.length / 4;
-
-        for (var pix = 0; pix < endPixCheck; pix += 4) {
-            var currentColor = {
-                r: imageData.data[pix],
-                g: imageData.data[pix + 1],
-                b: imageData.data[pix + 2]
-            };
-            var colorDifference = Math.sqrt(Math.pow(currentColor.r - sampleColor.r, 2) + Math.pow(currentColor.g - sampleColor.g, 2) + Math.pow(currentColor.b - sampleColor.b, 2));
-            // difference in color it is difference in color vectors (r1,g1,b1) <=> (r2,g2,b2)
-            if (colorDifference <= maxColorDifference * pixTolerance) {
-                matchPixCount++;
-            }
-        }
-
-        if (maxPixCount - matchPixCount <= maxPixCount * frameTolerance) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    function dropBlackFrames(_frames, _framesToCheck, _pixTolerance, _frameTolerance) {
-        var localCanvas = document.createElement('canvas');
-        localCanvas.width = canvas.width;
-        localCanvas.height = canvas.height;
-        var context2d = localCanvas.getContext('2d');
-        var resultFrames = [];
-
-        var checkUntilNotBlack = _framesToCheck === -1;
-        var endCheckFrame = _framesToCheck && _framesToCheck > 0 && _framesToCheck <= _frames.length ? _framesToCheck : _frames.length;
-        var sampleColor = {
-            r: 0,
-            g: 0,
-            b: 0
-        };
-        var maxColorDifference = Math.sqrt(Math.pow(255, 2) + Math.pow(255, 2) + Math.pow(255, 2));
-        var pixTolerance = _pixTolerance && _pixTolerance >= 0 && _pixTolerance <= 1 ? _pixTolerance : 0;
-        var frameTolerance = _frameTolerance && _frameTolerance >= 0 && _frameTolerance <= 1 ? _frameTolerance : 0;
-        var doNotCheckNext = false;
-
-        for (var f = 0; f < endCheckFrame; f++) {
-            var matchPixCount, endPixCheck, maxPixCount;
-
-            if (!doNotCheckNext) {
-                var image = new Image();
-                image.src = _frames[f].image;
-                context2d.drawImage(image, 0, 0, canvas.width, canvas.height);
-                var imageData = context2d.getImageData(0, 0, canvas.width, canvas.height);
-                matchPixCount = 0;
-                endPixCheck = imageData.data.length;
-                maxPixCount = imageData.data.length / 4;
-
-                for (var pix = 0; pix < endPixCheck; pix += 4) {
-                    var currentColor = {
-                        r: imageData.data[pix],
-                        g: imageData.data[pix + 1],
-                        b: imageData.data[pix + 2]
-                    };
-                    var colorDifference = Math.sqrt(Math.pow(currentColor.r - sampleColor.r, 2) + Math.pow(currentColor.g - sampleColor.g, 2) + Math.pow(currentColor.b - sampleColor.b, 2));
-                    // difference in color it is difference in color vectors (r1,g1,b1) <=> (r2,g2,b2)
-                    if (colorDifference <= maxColorDifference * pixTolerance) {
-                        matchPixCount++;
-                    }
-                }
-            }
-
-            if (!doNotCheckNext && maxPixCount - matchPixCount <= maxPixCount * frameTolerance) {
-                // console.log('removed black frame : ' + f + ' ; frame duration ' + _frames[f].duration);
-            } else {
-                // console.log('frame is passed : ' + f);
-                if (checkUntilNotBlack) {
-                    doNotCheckNext = true;
-                }
-                resultFrames.push(_frames[f]);
-            }
-        }
-
-        resultFrames = resultFrames.concat(_frames.slice(endCheckFrame));
-
-        if (resultFrames.length <= 0) {
-            // at least one last frame should be available for next manipulation
-            // if total duration of all frames will be < 1000 than ffmpeg doesn't work well...
-            resultFrames.push(_frames[_frames.length - 1]);
-        }
-
-        return resultFrames;
-    }
-
-    var isPaused = false;
-
-    this.pause = function () {
-        isPaused = true;
-    };
-
-    this.resume = function () {
-        isPaused = false;
-    };
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.WhammyRecorderHelper = WhammyRecorderHelper;
-}
-
-// --------------
-// GifRecorder.js
-
-function GifRecorder(mediaStream) {
-    if (typeof GIFEncoder === 'undefined') {
-        throw 'Please link: https://cdn.webrtc-experiment.com/gif-recorder.js';
-    }
-
-    // void start(optional long timeSlice)
-    // timestamp to fire "ondataavailable"
-    this.start = function (timeSlice) {
-        timeSlice = timeSlice || 1000;
-
-        var imageWidth = this.videoWidth || 320;
-        var imageHeight = this.videoHeight || 240;
-
-        canvas.width = video.width = imageWidth;
-        canvas.height = video.height = imageHeight;
-
-        // external library to record as GIF images
-        gifEncoder = new GIFEncoder();
-
-        // void setRepeat(int iter)
-        // Sets the number of times the set of GIF frames should be played.
-        // Default is 1; 0 means play indefinitely.
-        gifEncoder.setRepeat(0);
-
-        // void setFrameRate(Number fps)
-        // Sets frame rate in frames per second.
-        // Equivalent to setDelay(1000/fps).
-        // Using "setDelay" instead of "setFrameRate"
-        gifEncoder.setDelay(this.frameRate || this.speed || 200);
-
-        // void setQuality(int quality)
-        // Sets quality of color quantization (conversion of images to the
-        // maximum 256 colors allowed by the GIF specification).
-        // Lower values (minimum = 1) produce better colors,
-        // but slow processing significantly. 10 is the default,
-        // and produces good color mapping at reasonable speeds.
-        // Values greater than 20 do not yield significant improvements in speed.
-        gifEncoder.setQuality(this.quality || 1);
-
-        // Boolean start()
-        // This writes the GIF Header and returns false if it fails.
-        gifEncoder.start();
-
-        startTime = Date.now();
-
-        function drawVideoFrame(time) {
-            if (isPaused) {
-                setTimeout(drawVideoFrame, 500, time);
-                return;
-            }
-
-            lastAnimationFrame = requestAnimationFrame(drawVideoFrame);
-
-            if ((typeof lastFrameTime === 'undefined' ? 'undefined' : _typeof(lastFrameTime)) === undefined) {
-                lastFrameTime = time;
-            }
-
-            // ~10 fps
-            if (time - lastFrameTime < 90) {
-                return;
-            }
-
-            if (video.paused) {
-                video.play(); // Android
-            }
-
-            context.drawImage(video, 0, 0, imageWidth, imageHeight);
-
-            gifEncoder.addFrame(context);
-
-            // console.log('Recording...' + Math.round((Date.now() - startTime) / 1000) + 's');
-            // console.log("fps: ", 1000 / (time - lastFrameTime));
-
-            lastFrameTime = time;
-        }
-
-        lastAnimationFrame = requestAnimationFrame(drawVideoFrame);
-
-        timeout = setTimeout(doneRecording, timeSlice);
-    };
-
-    function doneRecording() {
-        endTime = Date.now();
-
-        var gifBlob = new Blob([new Uint8Array(gifEncoder.stream().bin)], {
-            type: 'image/gif'
-        });
-        self.ondataavailable(gifBlob);
-
-        // todo: find a way to clear old recorded blobs
-        gifEncoder.stream().bin = [];
-    }
-
-    this.stop = function () {
-        if (lastAnimationFrame) {
-            cancelAnimationFrame(lastAnimationFrame);
-            clearTimeout(timeout);
-            doneRecording();
-        }
-    };
-
-    var isPaused = false;
-
-    this.pause = function () {
-        isPaused = true;
-    };
-
-    this.resume = function () {
-        isPaused = false;
-    };
-
-    this.ondataavailable = function () {};
-    this.onstop = function () {};
-
-    // Reference to itself
-    var self = this;
-
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-
-    var video = document.createElement('video');
-    video.muted = true;
-    video.autoplay = true;
-    video.src = URL.createObjectURL(mediaStream);
-    video.play();
-
-    var lastAnimationFrame = null;
-    var startTime, endTime, lastFrameTime;
-
-    var gifEncoder;
-    var timeout;
-}
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.GifRecorder = GifRecorder;
-}
-
-// https://github.com/antimatter15/whammy/blob/master/LICENSE
-// _________
-// Whammy.js
-
-// todo: Firefox now supports webp for webm containers!
-// their MediaRecorder implementation works well!
-// should we provide an option to record via Whammy.js or MediaRecorder API is a better solution?
-
-/**
- * Whammy is a standalone class used by {@link RecordRTC} to bring video recording in Chrome. It is written by {@link https://github.com/antimatter15|antimatter15}
- * @summary A real time javascript webm encoder based on a canvas hack.
- * @typedef Whammy
- * @class
- * @example
- * var recorder = new Whammy().Video(15);
- * recorder.add(context || canvas || dataURL);
- * var output = recorder.compile();
- */
-
-var Whammy = function () {
-    // a more abstract-ish API
-
-    function WhammyVideo(duration, quality) {
-        this.frames = [];
-        if (!duration) {
-            duration = 1;
-        }
-        this.duration = 1000 / duration;
-        this.quality = quality || 0.8;
-    }
-
-    /**
-     * Pass Canvas or Context or image/webp(string) to {@link Whammy} encoder.
-     * @method
-     * @memberof Whammy
-     * @example
-     * recorder = new Whammy().Video(0.8, 100);
-     * recorder.add(canvas || context || 'image/webp');
-     * @param {string} frame - Canvas || Context || image/webp
-     * @param {number} duration - Stick a duration (in milliseconds)
-     */
-    WhammyVideo.prototype.add = function (frame, duration) {
-        if ('canvas' in frame) {
-            //CanvasRenderingContext2D
-            frame = frame.canvas;
-        }
-
-        if ('toDataURL' in frame) {
-            frame = frame.toDataURL('image/webp', this.quality);
-        }
-
-        if (!/^data:image\/webp;base64,/ig.test(frame)) {
-            throw 'Input must be formatted properly as a base64 encoded DataURI of type image/webp';
-        }
-        this.frames.push({
-            image: frame,
-            duration: duration || this.duration
-        });
-    };
-
-    function processInWebWorker(_function) {
-        var blob = URL.createObjectURL(new Blob([_function.toString(), 'this.onmessage =  function (e) {' + _function.name + '(e.data);}'], {
-            type: 'application/javascript'
-        }));
-
-        var worker = new Worker(blob);
-        URL.revokeObjectURL(blob);
-        return worker;
-    }
-
-    function whammyInWebWorker(frames) {
-        function ArrayToWebM(frames) {
-            var info = checkFrames(frames);
-            if (!info) {
-                return [];
-            }
-
-            var clusterMaxDuration = 30000;
-
-            var EBML = [{
-                'id': 0x1a45dfa3, // EBML
-                'data': [{
-                    'data': 1,
-                    'id': 0x4286 // EBMLVersion
-                }, {
-                    'data': 1,
-                    'id': 0x42f7 // EBMLReadVersion
-                }, {
-                    'data': 4,
-                    'id': 0x42f2 // EBMLMaxIDLength
-                }, {
-                    'data': 8,
-                    'id': 0x42f3 // EBMLMaxSizeLength
-                }, {
-                    'data': 'webm',
-                    'id': 0x4282 // DocType
-                }, {
-                    'data': 2,
-                    'id': 0x4287 // DocTypeVersion
-                }, {
-                    'data': 2,
-                    'id': 0x4285 // DocTypeReadVersion
-                }]
-            }, {
-                'id': 0x18538067, // Segment
-                'data': [{
-                    'id': 0x1549a966, // Info
-                    'data': [{
-                        'data': 1e6, //do things in millisecs (num of nanosecs for duration scale)
-                        'id': 0x2ad7b1 // TimecodeScale
-                    }, {
-                        'data': 'whammy',
-                        'id': 0x4d80 // MuxingApp
-                    }, {
-                        'data': 'whammy',
-                        'id': 0x5741 // WritingApp
-                    }, {
-                        'data': doubleToString(info.duration),
-                        'id': 0x4489 // Duration
-                    }]
-                }, {
-                    'id': 0x1654ae6b, // Tracks
-                    'data': [{
-                        'id': 0xae, // TrackEntry
-                        'data': [{
-                            'data': 1,
-                            'id': 0xd7 // TrackNumber
-                        }, {
-                            'data': 1,
-                            'id': 0x73c5 // TrackUID
-                        }, {
-                            'data': 0,
-                            'id': 0x9c // FlagLacing
-                        }, {
-                            'data': 'und',
-                            'id': 0x22b59c // Language
-                        }, {
-                            'data': 'V_VP8',
-                            'id': 0x86 // CodecID
-                        }, {
-                            'data': 'VP8',
-                            'id': 0x258688 // CodecName
-                        }, {
-                            'data': 1,
-                            'id': 0x83 // TrackType
-                        }, {
-                            'id': 0xe0, // Video
-                            'data': [{
-                                'data': info.width,
-                                'id': 0xb0 // PixelWidth
-                            }, {
-                                'data': info.height,
-                                'id': 0xba // PixelHeight
-                            }]
-                        }]
-                    }]
-                }]
-            }];
-
-            //Generate clusters (max duration)
-            var frameNumber = 0;
-            var clusterTimecode = 0;
-            while (frameNumber < frames.length) {
-
-                var clusterFrames = [];
-                var clusterDuration = 0;
-                do {
-                    clusterFrames.push(frames[frameNumber]);
-                    clusterDuration += frames[frameNumber].duration;
-                    frameNumber++;
-                } while (frameNumber < frames.length && clusterDuration < clusterMaxDuration);
-
-                var clusterCounter = 0;
-                var cluster = {
-                    'id': 0x1f43b675, // Cluster
-                    'data': getClusterData(clusterTimecode, clusterCounter, clusterFrames)
-                }; //Add cluster to segment
-                EBML[1].data.push(cluster);
-                clusterTimecode += clusterDuration;
-            }
-
-            return generateEBML(EBML);
-        }
-
-        function getClusterData(clusterTimecode, clusterCounter, clusterFrames) {
-            return [{
-                'data': clusterTimecode,
-                'id': 0xe7 // Timecode
-            }].concat(clusterFrames.map(function (webp) {
-                var block = makeSimpleBlock({
-                    discardable: 0,
-                    frame: webp.data.slice(4),
-                    invisible: 0,
-                    keyframe: 1,
-                    lacing: 0,
-                    trackNum: 1,
-                    timecode: Math.round(clusterCounter)
-                });
-                clusterCounter += webp.duration;
-                return {
-                    data: block,
-                    id: 0xa3
-                };
-            }));
-        }
-
-        // sums the lengths of all the frames and gets the duration
-
-        function checkFrames(frames) {
-            if (!frames[0]) {
-                postMessage({
-                    error: 'Something went wrong. Maybe WebP format is not supported in the current browser.'
-                });
-                return;
-            }
-
-            var width = frames[0].width,
-                height = frames[0].height,
-                duration = frames[0].duration;
-
-            for (var i = 1; i < frames.length; i++) {
-                duration += frames[i].duration;
-            }
-            return {
-                duration: duration,
-                width: width,
-                height: height
-            };
-        }
-
-        function numToBuffer(num) {
-            var parts = [];
-            while (num > 0) {
-                parts.push(num & 0xff);
-                num = num >> 8;
-            }
-            return new Uint8Array(parts.reverse());
-        }
-
-        function strToBuffer(str) {
-            return new Uint8Array(str.split('').map(function (e) {
-                return e.charCodeAt(0);
-            }));
-        }
-
-        function bitsToBuffer(bits) {
-            var data = [];
-            var pad = bits.length % 8 ? new Array(1 + 8 - bits.length % 8).join('0') : '';
-            bits = pad + bits;
-            for (var i = 0; i < bits.length; i += 8) {
-                data.push(parseInt(bits.substr(i, 8), 2));
-            }
-            return new Uint8Array(data);
-        }
-
-        function generateEBML(json) {
-            var ebml = [];
-            for (var i = 0; i < json.length; i++) {
-                var data = json[i].data;
-
-                if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
-                    data = generateEBML(data);
-                }
-
-                if (typeof data === 'number') {
-                    data = bitsToBuffer(data.toString(2));
-                }
-
-                if (typeof data === 'string') {
-                    data = strToBuffer(data);
-                }
-
-                var len = data.size || data.byteLength || data.length;
-                var zeroes = Math.ceil(Math.ceil(Math.log(len) / Math.log(2)) / 8);
-                var sizeToString = len.toString(2);
-                var padded = new Array(zeroes * 7 + 7 + 1 - sizeToString.length).join('0') + sizeToString;
-                var size = new Array(zeroes).join('0') + '1' + padded;
-
-                ebml.push(numToBuffer(json[i].id));
-                ebml.push(bitsToBuffer(size));
-                ebml.push(data);
-            }
-
-            return new Blob(ebml, {
-                type: 'video/webm'
-            });
-        }
-
-        function toBinStrOld(bits) {
-            var data = '';
-            var pad = bits.length % 8 ? new Array(1 + 8 - bits.length % 8).join('0') : '';
-            bits = pad + bits;
-            for (var i = 0; i < bits.length; i += 8) {
-                data += String.fromCharCode(parseInt(bits.substr(i, 8), 2));
-            }
-            return data;
-        }
-
-        function makeSimpleBlock(data) {
-            var flags = 0;
-
-            if (data.keyframe) {
-                flags |= 128;
-            }
-
-            if (data.invisible) {
-                flags |= 8;
-            }
-
-            if (data.lacing) {
-                flags |= data.lacing << 1;
-            }
-
-            if (data.discardable) {
-                flags |= 1;
-            }
-
-            if (data.trackNum > 127) {
-                throw 'TrackNumber > 127 not supported';
-            }
-
-            var out = [data.trackNum | 0x80, data.timecode >> 8, data.timecode & 0xff, flags].map(function (e) {
-                return String.fromCharCode(e);
-            }).join('') + data.frame;
-
-            return out;
-        }
-
-        function parseWebP(riff) {
-            var VP8 = riff.RIFF[0].WEBP[0];
-
-            var frameStart = VP8.indexOf('\x9d\x01\x2a'); // A VP8 keyframe starts with the 0x9d012a header
-            for (var i = 0, c = []; i < 4; i++) {
-                c[i] = VP8.charCodeAt(frameStart + 3 + i);
-            }
-
-            var width, height, tmp;
-
-            //the code below is literally copied verbatim from the bitstream spec
-            tmp = c[1] << 8 | c[0];
-            width = tmp & 0x3FFF;
-            tmp = c[3] << 8 | c[2];
-            height = tmp & 0x3FFF;
-            return {
-                width: width,
-                height: height,
-                data: VP8,
-                riff: riff
-            };
-        }
-
-        function getStrLength(string, offset) {
-            return parseInt(string.substr(offset + 4, 4).split('').map(function (i) {
-                var unpadded = i.charCodeAt(0).toString(2);
-                return new Array(8 - unpadded.length + 1).join('0') + unpadded;
-            }).join(''), 2);
-        }
-
-        function parseRIFF(string) {
-            var offset = 0;
-            var chunks = {};
-
-            while (offset < string.length) {
-                var id = string.substr(offset, 4);
-                var len = getStrLength(string, offset);
-                var data = string.substr(offset + 4 + 4, len);
-                offset += 4 + 4 + len;
-                chunks[id] = chunks[id] || [];
-
-                if (id === 'RIFF' || id === 'LIST') {
-                    chunks[id].push(parseRIFF(data));
-                } else {
-                    chunks[id].push(data);
-                }
-            }
-            return chunks;
-        }
-
-        function doubleToString(num) {
-            return [].slice.call(new Uint8Array(new Float64Array([num]).buffer), 0).map(function (e) {
-                return String.fromCharCode(e);
-            }).reverse().join('');
-        }
-
-        var webm = new ArrayToWebM(frames.map(function (frame) {
-            var webp = parseWebP(parseRIFF(atob(frame.image.slice(23))));
-            webp.duration = frame.duration;
-            return webp;
-        }));
-
-        postMessage(webm);
-    }
-
-    /**
-     * Encodes frames in WebM container. It uses WebWorkinvoke to invoke 'ArrayToWebM' method.
-     * @param {function} callback - Callback function, that is used to pass recorded blob back to the callee.
-     * @method
-     * @memberof Whammy
-     * @example
-     * recorder = new Whammy().Video(0.8, 100);
-     * recorder.compile(function(blob) {
-     *    // blob.size - blob.type
-     * });
-     */
-    WhammyVideo.prototype.compile = function (callback) {
-        var webWorker = processInWebWorker(whammyInWebWorker);
-
-        webWorker.onmessage = function (event) {
-            if (event.data.error) {
-                console.error(event.data.error);
-                return;
-            }
-            callback(event.data);
-        };
-
-        webWorker.postMessage(this.frames);
-    };
-
-    return {
-        /**
-         * A more abstract-ish API.
-         * @method
-         * @memberof Whammy
-         * @example
-         * recorder = new Whammy().Video(0.8, 100);
-         * @param {?number} speed - 0.8
-         * @param {?number} quality - 100
-         */
-        Video: WhammyVideo
-    };
-}();
-
-if (typeof MediaStreamRecorder !== 'undefined') {
-    MediaStreamRecorder.Whammy = Whammy;
-}
-
-// Last time updated at Nov 18, 2014, 08:32:23
-
-// Latest file can be found here: https://cdn.webrtc-experiment.com/ConcatenateBlobs.js
-
-// Muaz Khan    - www.MuazKhan.com
-// MIT License  - www.WebRTC-Experiment.com/licence
-// Source Code  - https://github.com/muaz-khan/ConcatenateBlobs
-// Demo         - https://www.WebRTC-Experiment.com/ConcatenateBlobs/
-
-// ___________________
-// ConcatenateBlobs.js
-
-// Simply pass array of blobs.
-// This javascript library will concatenate all blobs in single "Blob" object.
-
-(function () {
-    window.ConcatenateBlobs = function (blobs, type, callback) {
-        var buffers = [];
-
-        var index = 0;
-
-        function readAsArrayBuffer() {
-            if (!blobs[index]) {
-                return concatenateBuffers();
-            }
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                buffers.push(event.target.result);
-                index++;
-                readAsArrayBuffer();
-            };
-            reader.readAsArrayBuffer(blobs[index]);
-        }
-
-        readAsArrayBuffer();
-
-        function concatenateBuffers() {
-            var byteLength = 0;
-            buffers.forEach(function (buffer) {
-                byteLength += buffer.byteLength;
-            });
-
-            var tmp = new Uint16Array(byteLength);
-            var lastOffset = 0;
-            buffers.forEach(function (buffer) {
-                // BYTES_PER_ELEMENT == 2 for Uint16Array
-                var reusableByteLength = buffer.byteLength;
-                if (reusableByteLength % 2 != 0) {
-                    buffer = buffer.slice(0, reusableByteLength - 1);
-                }
-                tmp.set(new Uint16Array(buffer), lastOffset);
-                lastOffset += reusableByteLength;
-            });
-
-            var blob = new Blob([tmp.buffer], {
-                type: type
-            });
-
-            callback(blob);
-        }
-    };
-})();
-
-// https://github.com/streamproc/MediaStreamRecorder/issues/42
-if (true /* && !!module.exports*/) {
-        module.exports = MediaStreamRecorder;
-    }
-
-if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-        return MediaStreamRecorder;
-    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var buffer = __webpack_require__(0);
@@ -5962,7 +3723,7 @@ exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5991,8 +3752,8 @@ exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var punycode = __webpack_require__(93);
-var util = __webpack_require__(90);
+var punycode = __webpack_require__(91);
+var util = __webpack_require__(88);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -6677,7 +4438,7 @@ Url.prototype.parseHost = function () {
 };
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6725,7 +4486,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6735,11 +4496,11 @@ module.exports = simpleGet;
 
 var concat = __webpack_require__(44);
 var http = __webpack_require__(45);
-var https = __webpack_require__(74);
+var https = __webpack_require__(72);
 var once = __webpack_require__(9);
 var querystring = __webpack_require__(39);
-var unzipResponse = __webpack_require__(134 // excluded from browser build
-);var url = __webpack_require__(23);
+var unzipResponse = __webpack_require__(132 // excluded from browser build
+);var url = __webpack_require__(22);
 
 function simpleGet(opts, cb) {
   opts = typeof opts === 'string' ? { url: opts } : Object.assign({}, opts);
@@ -6839,7 +4600,7 @@ function isStream(obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6850,7 +4611,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 module.exports = Peer;
 
 var debug = __webpack_require__(5)('simple-peer');
-var getBrowserRTC = __webpack_require__(73);
+var getBrowserRTC = __webpack_require__(71);
 var inherits = __webpack_require__(1);
 var randombytes = __webpack_require__(13);
 var stream = __webpack_require__(3);
@@ -7639,7 +5400,7 @@ function noop() {}
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7682,7 +5443,7 @@ module.exports = function (seconds) {
 };
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -7864,6 +5625,7 @@ module.exports = {
 };
 
 /***/ }),
+/* 28 */,
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7882,7 +5644,7 @@ var debug = __webpack_require__(5)('bittorrent-protocol');
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
 var randombytes = __webpack_require__(13);
-var speedometer = __webpack_require__(27);
+var speedometer = __webpack_require__(26);
 var stream = __webpack_require__(3);
 
 var BITFIELD_GROW = 400000;
@@ -8637,7 +6399,7 @@ exports.hexToBinary = function (str) {
   return Buffer.from(str, 'hex').toString('binary');
 };
 
-var config = __webpack_require__(131);
+var config = __webpack_require__(129);
 extend(exports, config);
 
 /***/ }),
@@ -8651,7 +6413,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var inherits = __webpack_require__(1);
 var Transform = __webpack_require__(3).Transform;
-var defined = __webpack_require__(70);
+var defined = __webpack_require__(68);
 
 module.exports = Block;
 inherits(Block, Transform);
@@ -9447,11 +7209,11 @@ function base64DetectIncompleteChar(buffer) {
 module.exports = parseTorrent;
 module.exports.remote = parseTorrentRemote;
 
-var blobToBuffer = __webpack_require__(64);
+var blobToBuffer = __webpack_require__(62);
 var fs = __webpack_require__(19 // browser exclude
-);var get = __webpack_require__(25);
-var magnet = __webpack_require__(81);
-var parseTorrentFile = __webpack_require__(91);
+);var get = __webpack_require__(24);
+var magnet = __webpack_require__(79);
+var parseTorrentFile = __webpack_require__(89);
 
 module.exports.toMagnetURI = magnet.encode;
 module.exports.toTorrentFile = parseTorrentFile.encode;
@@ -9565,7 +7327,7 @@ function isBlob(obj) {
 
 var once = __webpack_require__(9);
 var eos = __webpack_require__(32);
-var fs = __webpack_require__(132 // we only need fs to get the ReadStream and WriteStream prototypes
+var fs = __webpack_require__(130 // we only need fs to get the ReadStream and WriteStream prototypes
 
 );var noop = function noop() {};
 
@@ -9651,8 +7413,8 @@ module.exports = pump;
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(94);
-exports.encode = exports.stringify = __webpack_require__(95);
+exports.decode = exports.parse = __webpack_require__(92);
+exports.encode = exports.stringify = __webpack_require__(93);
 
 /***/ }),
 /* 40 */
@@ -9664,7 +7426,7 @@ exports.encode = exports.stringify = __webpack_require__(95);
 module.exports = Readable;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(24);
+var processNextTick = __webpack_require__(23);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -9691,7 +7453,7 @@ var Stream = __webpack_require__(43);
 
 var Buffer = __webpack_require__(0).Buffer;
 /*<replacement>*/
-var bufferShim = __webpack_require__(22);
+var bufferShim = __webpack_require__(21);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -9700,7 +7462,7 @@ util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(133);
+var debugUtil = __webpack_require__(131);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -9709,7 +7471,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(99);
+var BufferList = __webpack_require__(97);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -10798,7 +8560,7 @@ function done(stream, er, data) {
 module.exports = Writable;
 
 /*<replacement>*/
-var processNextTick = __webpack_require__(24);
+var processNextTick = __webpack_require__(23);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -10818,7 +8580,7 @@ util.inherits = __webpack_require__(1);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(116)
+  deprecate: __webpack_require__(114)
 };
 /*</replacement>*/
 
@@ -10828,7 +8590,7 @@ var Stream = __webpack_require__(43);
 
 var Buffer = __webpack_require__(0).Buffer;
 /*<replacement>*/
-var bufferShim = __webpack_require__(22);
+var bufferShim = __webpack_require__(21);
 /*</replacement>*/
 
 util.inherits(Writable, Stream);
@@ -11333,7 +9095,7 @@ function CorkedRequest(state) {
     }
   };
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(110).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(108).setImmediate))
 
 /***/ }),
 /* 43 */
@@ -11374,10 +9136,10 @@ module.exports = function (stream, cb) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var ClientRequest = __webpack_require__(105);
+var ClientRequest = __webpack_require__(103);
 var extend = __webpack_require__(7);
-var statusCodes = __webpack_require__(65);
-var url = __webpack_require__(23);
+var statusCodes = __webpack_require__(63);
+var url = __webpack_require__(22);
 
 var http = exports;
 
@@ -11647,28 +9409,28 @@ module.exports = WebTorrent;
 
 var Buffer = __webpack_require__(8).Buffer;
 var concat = __webpack_require__(44);
-var createTorrent = __webpack_require__(68);
+var createTorrent = __webpack_require__(66);
 var debug = __webpack_require__(5)('webtorrent');
-var DHT = __webpack_require__(138 // browser exclude
+var DHT = __webpack_require__(136 // browser exclude
 );var EventEmitter = __webpack_require__(6).EventEmitter;
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
-var loadIPSet = __webpack_require__(139 // browser exclude
+var loadIPSet = __webpack_require__(137 // browser exclude
 );var parallel = __webpack_require__(14);
 var parseTorrent = __webpack_require__(37);
 var path = __webpack_require__(10);
-var Peer = __webpack_require__(26);
+var Peer = __webpack_require__(25);
 var randombytes = __webpack_require__(13);
-var speedometer = __webpack_require__(27);
-var zeroFill = __webpack_require__(127);
+var speedometer = __webpack_require__(26);
+var zeroFill = __webpack_require__(125);
 
-var TCPPool = __webpack_require__(137 // browser exclude
-);var Torrent = __webpack_require__(124
+var TCPPool = __webpack_require__(135 // browser exclude
+);var Torrent = __webpack_require__(122
 
 /**
  * WebTorrent version.
  */
-);var VERSION = __webpack_require__(28).version;
+);var VERSION = __webpack_require__(27).version;
 
 /**
  * Version number in Azureus-style. Generated from major and minor semver version.
@@ -12119,107 +9881,7 @@ function isFileList(obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(2)))
 
 /***/ }),
-/* 54 */,
-/* 55 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// API https://github.com/webtorrent/webtorrent/blob/master/docs/api.md
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MediaStreamRecorder = __webpack_require__(21);
-var WebTorrent = __webpack_require__(53);
-var EventEmitter = __webpack_require__(144);
-
-var defaultOptions = {
-  seconds: 8000,
-  announceList: [],
-  mediaConstraints: {
-    audio: true, // don't forget audio!
-    video: true // don't forget video!
-  }
-};
-
-var Viewer = function (_EventEmitter) {
-  _inherits(Viewer, _EventEmitter);
-
-  function Viewer() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _classCallCheck(this, Viewer);
-
-    var _this = _possibleConstructorReturn(this, (Viewer.__proto__ || Object.getPrototypeOf(Viewer)).call(this));
-
-    _this._webTorrentClient = new WebTorrent();
-    _this._options = Object.assign(defaultOptions, options);
-    return _this;
-  }
-
-  _createClass(Viewer, [{
-    key: 'start',
-    value: function start(magnetURI) {
-      var _this2 = this;
-
-      var opts = {
-        announce: this._options.announceList,
-        // store: // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
-        getAnnounceOpts: function getAnnounceOpts() {
-          return {
-            customUsername: 'fooBar'
-          };
-        },
-        dht: false
-      };
-
-      this._webTorrentClient.add(magnetURI, opts, function (torrent) {
-        /* Look for the file that ends in .webm and render it, in the future we can
-         * add additional file types for scaling. E.g other video formats or even VR!
-         */
-
-        var file = torrent.files.find(function (file) {
-          return file.name.endsWith('.webm');
-        });
-
-        torrent.on('download', function (bytes) {
-          console.log('just downloaded: ' + bytes);
-          console.log('total downloaded: ' + torrent.downloaded);
-          console.log('download speed: ' + torrent.downloadSpeed);
-          console.log('progress: ' + torrent.progress);
-        });
-
-        torrent.on('wire', function (wire, addr) {
-          console.log('Connected to peer with address ' + addr);
-        }
-
-        // Stream the file in the browser
-        );file.renderTo(_this2._options.renderTo, {
-          autoplay: true
-        }
-
-        // listens for when torrents are done and appends total downloaded to menu
-        );torrent.on('done', function () {
-          console.log('Torrent done');
-        });
-      });
-    }
-  }]);
-
-  return Viewer;
-}(EventEmitter);
-
-module.exports = Viewer;
-
-/***/ }),
-/* 56 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12250,7 +9912,7 @@ module.exports.reset = function reset() {
 };
 
 /***/ }),
-/* 57 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12370,7 +10032,7 @@ function fromByteArray(uint8) {
 }
 
 /***/ }),
-/* 58 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12536,7 +10198,7 @@ module.exports = decode;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 59 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12655,7 +10317,7 @@ module.exports = encode;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 60 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12695,7 +10357,7 @@ module.exports = function (haystack, needle, comparator, low, high) {
 };
 
 /***/ }),
-/* 61 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12710,14 +10372,14 @@ var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
 var once = __webpack_require__(9);
 var parallel = __webpack_require__(14);
-var Peer = __webpack_require__(26);
+var Peer = __webpack_require__(25);
 var uniq = __webpack_require__(20);
-var url = __webpack_require__(23);
+var url = __webpack_require__(22);
 
 var common = __webpack_require__(30);
-var HTTPTracker = __webpack_require__(129 // empty object in browser
-);var UDPTracker = __webpack_require__(130 // empty object in browser
-);var WebSocketTracker = __webpack_require__(63);
+var HTTPTracker = __webpack_require__(127 // empty object in browser
+);var UDPTracker = __webpack_require__(128 // empty object in browser
+);var WebSocketTracker = __webpack_require__(61);
 
 inherits(Client, EventEmitter
 
@@ -12988,7 +10650,7 @@ Client.prototype._defaultAnnounceOpts = function (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 62 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13026,7 +10688,7 @@ Tracker.prototype.setInterval = function (intervalMs) {
 };
 
 /***/ }),
-/* 63 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13037,12 +10699,12 @@ module.exports = WebSocketTracker;
 var debug = __webpack_require__(5)('bittorrent-tracker:websocket-tracker');
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
-var Peer = __webpack_require__(26);
+var Peer = __webpack_require__(25);
 var randombytes = __webpack_require__(13);
-var Socket = __webpack_require__(104);
+var Socket = __webpack_require__(102);
 
 var common = __webpack_require__(30);
-var Tracker = __webpack_require__(62
+var Tracker = __webpack_require__(60
 
 // Use a socket pool, so tracker clients share WebSocket objects for the same server.
 // In practice, WebSockets are pretty slow to establish, so this gives a nice performance
@@ -13470,7 +11132,7 @@ WebSocketTracker.prototype._createPeer = function (opts) {
 function noop() {}
 
 /***/ }),
-/* 64 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13499,7 +11161,7 @@ module.exports = function blobToBuffer(blob, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 65 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13571,7 +11233,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 66 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13630,7 +11292,7 @@ ChunkStoreWriteStream.prototype.destroy = function (err) {
 };
 
 /***/ }),
-/* 67 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13659,7 +11321,7 @@ function closest(n, arr, rndx) {
 }
 
 /***/ }),
-/* 68 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13674,14 +11336,14 @@ module.exports.announceList = [['udp://tracker.leechers-paradise.org:6969'], ['u
 
 var bencode = __webpack_require__(16);
 var BlockStream = __webpack_require__(31);
-var calcPieceLength = __webpack_require__(92);
+var calcPieceLength = __webpack_require__(90);
 var corePath = __webpack_require__(10);
 var extend = __webpack_require__(7);
-var FileReadStream = __webpack_require__(71);
-var flatten = __webpack_require__(72);
+var FileReadStream = __webpack_require__(69);
+var flatten = __webpack_require__(70);
 var fs = __webpack_require__(19);
-var isFile = __webpack_require__(78);
-var junk = __webpack_require__(80);
+var isFile = __webpack_require__(76);
+var junk = __webpack_require__(78);
 var MultiStream = __webpack_require__(35);
 var once = __webpack_require__(9);
 var parallel = __webpack_require__(14);
@@ -14151,7 +11813,7 @@ function getStreamStream(readable, file) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
-/* 69 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14169,7 +11831,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(88);
+exports.humanize = __webpack_require__(86);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -14354,7 +12016,7 @@ function coerce(val) {
 }
 
 /***/ }),
-/* 70 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14367,7 +12029,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 71 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14376,7 +12038,7 @@ module.exports = function () {
 var Readable = __webpack_require__(3).Readable;
 var inherits = __webpack_require__(1);
 var reExtension = /^.*\.(\w+)$/;
-var toBuffer = __webpack_require__(113);
+var toBuffer = __webpack_require__(111);
 
 function FileReadStream(file, opts) {
   var readStream = this;
@@ -14469,7 +12131,7 @@ FileReadStream.prototype.destroy = function () {
 };
 
 /***/ }),
-/* 72 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14501,7 +12163,7 @@ module.exports = function flatten(list, depth) {
 };
 
 /***/ }),
-/* 73 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14521,7 +12183,7 @@ module.exports = function getBrowserRTC() {
 };
 
 /***/ }),
-/* 74 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14543,7 +12205,7 @@ https.request = function (params, cb) {
 };
 
 /***/ }),
-/* 75 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14635,7 +12297,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 };
 
 /***/ }),
-/* 76 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14693,7 +12355,7 @@ function nextTick(cb, err, val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 77 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14714,7 +12376,7 @@ module.exports = function isAscii(str) {
 };
 
 /***/ }),
-/* 78 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14738,7 +12400,7 @@ function isFileSync(path) {
 }
 
 /***/ }),
-/* 79 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14774,7 +12436,7 @@ function isLooseTypedArray(arr) {
 }
 
 /***/ }),
-/* 80 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14810,7 +12472,7 @@ exports.not = exports.isnt = function (filename) {
 };
 
 /***/ }),
-/* 81 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14820,7 +12482,7 @@ module.exports = magnetURIDecode;
 module.exports.decode = magnetURIDecode;
 module.exports.encode = magnetURIEncode;
 
-var base32 = __webpack_require__(108);
+var base32 = __webpack_require__(106);
 var Buffer = __webpack_require__(8).Buffer;
 var extend = __webpack_require__(7);
 var uniq = __webpack_require__(20
@@ -14947,7 +12609,7 @@ function magnetURIEncode(obj) {
 }
 
 /***/ }),
-/* 82 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15012,7 +12674,7 @@ function nextTick(cb, err, val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 83 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15020,7 +12682,7 @@ function nextTick(cb, err, val) {
 
 // This is an intentionally recursive require. I don't like it either.
 var Box = __webpack_require__(18);
-var Descriptor = __webpack_require__(84);
+var Descriptor = __webpack_require__(82);
 
 var TIME_OFFSET = 2082844800000;
 
@@ -15931,7 +13593,7 @@ function readString(buf, offset, length) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 84 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16012,7 +13674,7 @@ exports.DecoderConfigDescriptor.decode = function (buf, start, end) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 85 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16020,7 +13682,7 @@ exports.DecoderConfigDescriptor.decode = function (buf, start, end) {
 
 var stream = __webpack_require__(3);
 var inherits = __webpack_require__(1);
-var nextEvent = __webpack_require__(89);
+var nextEvent = __webpack_require__(87);
 var Box = __webpack_require__(18);
 
 var EMPTY = new Buffer(0);
@@ -16204,7 +13866,7 @@ MediaData.prototype.destroy = function (err) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 86 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16342,17 +14004,17 @@ MediaData.prototype.destroy = function (err) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(2)))
 
 /***/ }),
-/* 87 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = __webpack_require__(85);
-exports.encode = __webpack_require__(86);
+exports.decode = __webpack_require__(83);
+exports.encode = __webpack_require__(84);
 
 /***/ }),
-/* 88 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16479,7 +14141,7 @@ function plural(ms, n, name) {
 }
 
 /***/ }),
-/* 89 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16502,7 +14164,7 @@ function nextEvent(emitter, name) {
 }
 
 /***/ }),
-/* 90 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16526,7 +14188,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 91 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16680,13 +14342,13 @@ function ensure(bool, fieldName) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 92 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var closest = __webpack_require__(67);
+var closest = __webpack_require__(65);
 var kB = Math.pow(2, 10
 
 // Create a range from 16kb–4mb
@@ -16699,7 +14361,7 @@ while (p++ < 22) {
 };
 
 /***/ }),
-/* 93 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17233,10 +14895,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		root.punycode = punycode;
 	}
 })(undefined);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(119)(module), __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(117)(module), __webpack_require__(4)))
 
 /***/ }),
-/* 94 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17330,7 +14992,7 @@ var isArray = Array.isArray || function (xs) {
 };
 
 /***/ }),
-/* 95 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17421,7 +15083,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 /***/ }),
-/* 96 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17448,7 +15110,7 @@ var iterate = function iterate(list) {
 module.exports = iterate;
 
 /***/ }),
-/* 97 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17581,7 +15243,7 @@ RangeSliceStream.prototype.destroy = function (err) {
 };
 
 /***/ }),
-/* 98 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17613,7 +15275,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 99 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17621,7 +15283,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 
 var Buffer = __webpack_require__(0).Buffer;
 /*<replacement>*/
-var bufferShim = __webpack_require__(22);
+var bufferShim = __webpack_require__(21);
 /*</replacement>*/
 
 module.exports = BufferList;
@@ -17683,7 +15345,7 @@ BufferList.prototype.concat = function (n) {
 };
 
 /***/ }),
-/* 100 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17691,14 +15353,14 @@ BufferList.prototype.concat = function (n) {
 
 exports.render = render;
 exports.append = append;
-exports.mime = __webpack_require__(128);
+exports.mime = __webpack_require__(126);
 
 var debug = __webpack_require__(5)('render-media');
-var isAscii = __webpack_require__(77);
+var isAscii = __webpack_require__(75);
 var MediaElementWrapper = __webpack_require__(34);
 var path = __webpack_require__(10);
 var streamToBlobURL = __webpack_require__(47);
-var videostream = __webpack_require__(118);
+var videostream = __webpack_require__(116);
 
 var VIDEOSTREAM_EXTS = ['.m4a', '.m4v', '.mp4'];
 
@@ -17990,7 +15652,7 @@ function parseOpts(opts) {
 }
 
 /***/ }),
-/* 101 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18068,7 +15730,7 @@ module.exports = function (tasks, limit, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 102 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18636,7 +16298,7 @@ module.exports = function (tasks, limit, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 103 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18827,7 +16489,7 @@ module.exports = function (tasks, limit, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(2)))
 
 /***/ }),
-/* 104 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18842,7 +16504,7 @@ var debug = __webpack_require__(5)('simple-websocket');
 var inherits = __webpack_require__(1);
 var randombytes = __webpack_require__(13);
 var stream = __webpack_require__(3);
-var ws = __webpack_require__(135 // websockets in node - will be empty object in browser
+var ws = __webpack_require__(133 // websockets in node - will be empty object in browser
 
 );var _WebSocket = typeof ws !== 'function' ? WebSocket : ws;
 
@@ -19099,7 +16761,7 @@ Socket.prototype._debug = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 105 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19107,7 +16769,7 @@ Socket.prototype._debug = function () {
 
 var capability = __webpack_require__(46);
 var inherits = __webpack_require__(1);
-var response = __webpack_require__(106);
+var response = __webpack_require__(104);
 var stream = __webpack_require__(3);
 var toArrayBuffer = __webpack_require__(49);
 
@@ -19380,7 +17042,7 @@ var unsafeHeaders = ['accept-charset', 'accept-encoding', 'access-control-reques
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer, __webpack_require__(4), __webpack_require__(2)))
 
 /***/ }),
-/* 106 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19567,7 +17229,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(0).Buffer, __webpack_require__(4)))
 
 /***/ }),
-/* 107 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19589,7 +17251,7 @@ module.exports = function getBuffer(stream, length, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 108 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19617,13 +17279,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var base32 = __webpack_require__(109);
+var base32 = __webpack_require__(107);
 
 exports.encode = base32.encode;
 exports.decode = base32.decode;
 
 /***/ }),
-/* 109 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19747,7 +17409,7 @@ exports.decode = function (encoded) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 110 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19801,12 +17463,12 @@ exports._unrefActive = exports.active = function (item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(103);
+__webpack_require__(101);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 /***/ }),
-/* 111 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19817,12 +17479,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 module.exports = Discovery;
 
 var debug = __webpack_require__(5)('torrent-discovery');
-var DHT = __webpack_require__(136 // empty object in browser
+var DHT = __webpack_require__(134 // empty object in browser
 );var EventEmitter = __webpack_require__(6).EventEmitter;
 var extend = __webpack_require__(7);
 var inherits = __webpack_require__(1);
 var parallel = __webpack_require__(14);
-var Tracker = __webpack_require__(61);
+var Tracker = __webpack_require__(59);
 
 inherits(Discovery, EventEmitter);
 
@@ -20011,7 +17673,7 @@ Discovery.prototype._dhtAnnounce = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 112 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20123,7 +17785,7 @@ Piece.prototype.init = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 113 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20138,7 +17800,7 @@ Piece.prototype.init = function () {
  * `npm install typedarray-to-buffer`
  */
 
-var isTypedArray = __webpack_require__(79).strict;
+var isTypedArray = __webpack_require__(77).strict;
 
 module.exports = function typedarrayToBuffer(arr) {
   if (isTypedArray(arr)) {
@@ -20157,7 +17819,7 @@ module.exports = function typedarrayToBuffer(arr) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 114 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20198,7 +17860,7 @@ exports.decode.bytes = 8;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 115 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20445,7 +18107,7 @@ module.exports = function (metadata) {
 };
 
 /***/ }),
-/* 116 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20520,18 +18182,18 @@ function config(name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 117 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-var bs = __webpack_require__(60);
+var bs = __webpack_require__(58);
 var EventEmitter = __webpack_require__(6).EventEmitter;
 var inherits = __webpack_require__(1);
-var mp4 = __webpack_require__(87);
+var mp4 = __webpack_require__(85);
 var Box = __webpack_require__(18);
-var RangeSliceStream = __webpack_require__(97);
+var RangeSliceStream = __webpack_require__(95);
 
 module.exports = MP4Remuxer;
 
@@ -20996,7 +18658,7 @@ MP4Remuxer.prototype._generateMoof = function (track, firstSample, lastSample) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 118 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21005,7 +18667,7 @@ MP4Remuxer.prototype._generateMoof = function (track, firstSample, lastSample) {
 var MediaElementWrapper = __webpack_require__(34);
 var pump = __webpack_require__(38);
 
-var MP4Remuxer = __webpack_require__(117);
+var MP4Remuxer = __webpack_require__(115);
 
 module.exports = VideoStream;
 
@@ -21128,7 +18790,7 @@ VideoStream.prototype.destroy = function () {
 };
 
 /***/ }),
-/* 119 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21158,7 +18820,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 120 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21264,7 +18926,7 @@ FileStream.prototype._destroy = function (err, onclose) {
 };
 
 /***/ }),
-/* 121 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21274,14 +18936,14 @@ module.exports = File;
 
 var eos = __webpack_require__(32);
 var EventEmitter = __webpack_require__(6).EventEmitter;
-var FileStream = __webpack_require__(120);
+var FileStream = __webpack_require__(118);
 var inherits = __webpack_require__(1);
 var path = __webpack_require__(10);
-var render = __webpack_require__(100);
+var render = __webpack_require__(98);
 var stream = __webpack_require__(3);
 var streamToBlob = __webpack_require__(48);
 var streamToBlobURL = __webpack_require__(47);
-var streamToBuffer = __webpack_require__(107);
+var streamToBuffer = __webpack_require__(105);
 
 inherits(File, EventEmitter);
 
@@ -21396,7 +19058,7 @@ File.prototype._destroy = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 122 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21406,7 +19068,7 @@ var arrayRemove = __webpack_require__(50);
 var debug = __webpack_require__(5)('webtorrent:peer');
 var Wire = __webpack_require__(29);
 
-var WebConn = __webpack_require__(125);
+var WebConn = __webpack_require__(123);
 
 var CONNECT_TIMEOUT_TCP = 5000;
 var CONNECT_TIMEOUT_WEBRTC = 25000;
@@ -21653,7 +19315,7 @@ Peer.prototype.destroy = function (err) {
 function noop() {}
 
 /***/ }),
-/* 123 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21782,7 +19444,7 @@ function trueFn() {
 }
 
 /***/ }),
-/* 124 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21792,39 +19454,39 @@ function trueFn() {
 
 module.exports = Torrent;
 
-var addrToIPPort = __webpack_require__(56);
+var addrToIPPort = __webpack_require__(54);
 var BitField = __webpack_require__(17);
-var ChunkStoreWriteStream = __webpack_require__(66);
+var ChunkStoreWriteStream = __webpack_require__(64);
 var debug = __webpack_require__(5)('webtorrent:torrent');
-var Discovery = __webpack_require__(111);
+var Discovery = __webpack_require__(109);
 var EventEmitter = __webpack_require__(6).EventEmitter;
 var extend = __webpack_require__(7);
 var extendMutable = __webpack_require__(51);
 var fs = __webpack_require__(19);
-var FSChunkStore = __webpack_require__(82 // browser: `memory-chunk-store`
-);var get = __webpack_require__(25);
-var ImmediateChunkStore = __webpack_require__(76);
+var FSChunkStore = __webpack_require__(80 // browser: `memory-chunk-store`
+);var get = __webpack_require__(24);
+var ImmediateChunkStore = __webpack_require__(74);
 var inherits = __webpack_require__(1);
 var MultiStream = __webpack_require__(35);
-var net = __webpack_require__(141 // browser exclude
-);var os = __webpack_require__(142 // browser exclude
+var net = __webpack_require__(139 // browser exclude
+);var os = __webpack_require__(140 // browser exclude
 );var parallel = __webpack_require__(14);
-var parallelLimit = __webpack_require__(101);
+var parallelLimit = __webpack_require__(99);
 var parseTorrent = __webpack_require__(37);
 var path = __webpack_require__(10);
-var Piece = __webpack_require__(112);
+var Piece = __webpack_require__(110);
 var pump = __webpack_require__(38);
-var randomIterate = __webpack_require__(96);
+var randomIterate = __webpack_require__(94);
 var sha1 = __webpack_require__(15);
-var speedometer = __webpack_require__(27);
+var speedometer = __webpack_require__(26);
 var uniq = __webpack_require__(20);
-var utMetadata = __webpack_require__(115);
-var utPex = __webpack_require__(143 // browser exclude
+var utMetadata = __webpack_require__(113);
+var utPex = __webpack_require__(141 // browser exclude
 
-);var File = __webpack_require__(121);
-var Peer = __webpack_require__(122);
-var RarityMap = __webpack_require__(123);
-var Server = __webpack_require__(140 // browser exclude
+);var File = __webpack_require__(119);
+var Peer = __webpack_require__(120);
+var RarityMap = __webpack_require__(121);
+var Server = __webpack_require__(138 // browser exclude
 
 );var MAX_BLOCK_LENGTH = 128 * 1024;
 var PIECE_TIMEOUT = 30000;
@@ -21841,7 +19503,7 @@ var FILESYSTEM_CONCURRENCY = 2;
 
 var RECONNECT_WAIT = [1000, 5000, 15000];
 
-var VERSION = __webpack_require__(28).version;
+var VERSION = __webpack_require__(27).version;
 var USER_AGENT = 'WebTorrent/' + VERSION + ' (https://webtorrent.io)';
 
 var TMP;
@@ -23536,7 +21198,7 @@ function noop() {}
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
-/* 125 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23547,12 +21209,12 @@ module.exports = WebConn;
 var BitField = __webpack_require__(17);
 var Buffer = __webpack_require__(8).Buffer;
 var debug = __webpack_require__(5)('webtorrent:webconn');
-var get = __webpack_require__(25);
+var get = __webpack_require__(24);
 var inherits = __webpack_require__(1);
 var sha1 = __webpack_require__(15);
 var Wire = __webpack_require__(29);
 
-var VERSION = __webpack_require__(28).version;
+var VERSION = __webpack_require__(27).version;
 
 inherits(WebConn, Wire
 
@@ -23744,7 +21406,7 @@ WebConn.prototype.destroy = function () {
 };
 
 /***/ }),
-/* 126 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23784,7 +21446,7 @@ function wrappy(fn, cb) {
 }
 
 /***/ }),
-/* 127 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23810,7 +21472,7 @@ module.exports = function zeroFill(width, number, pad) {
 };
 
 /***/ }),
-/* 128 */
+/* 126 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -23896,6 +21558,18 @@ module.exports = {
 };
 
 /***/ }),
+/* 127 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
 /* 129 */
 /***/ (function(module, exports) {
 
@@ -23975,18 +21649,6 @@ module.exports = {
 
 /***/ }),
 /* 142 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 143 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24294,6 +21956,105 @@ EventEmitter.EventEmitter = EventEmitter;
 if (true) {
   module.exports = EventEmitter;
 }
+
+/***/ }),
+/* 143 */,
+/* 144 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// API https://github.com/webtorrent/webtorrent/blob/master/docs/api.md
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var WebTorrent = __webpack_require__(53);
+var EventEmitter = __webpack_require__(142);
+
+var defaultOptions = {
+  seconds: 8000,
+  announceList: [],
+  mediaConstraints: {
+    audio: true, // don't forget audio!
+    video: true // don't forget video!
+  }
+};
+
+var Viewer = function (_EventEmitter) {
+  _inherits(Viewer, _EventEmitter);
+
+  function Viewer() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Viewer);
+
+    var _this = _possibleConstructorReturn(this, (Viewer.__proto__ || Object.getPrototypeOf(Viewer)).call(this));
+
+    _this._webTorrentClient = new WebTorrent();
+    _this._options = Object.assign(defaultOptions, options);
+    return _this;
+  }
+
+  _createClass(Viewer, [{
+    key: 'start',
+    value: function start(magnetURI) {
+      var _this2 = this;
+
+      var opts = {
+        announce: this._options.announceList,
+        // store: // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
+        getAnnounceOpts: function getAnnounceOpts() {
+          return {
+            username: 'fooBar'
+          };
+        },
+        dht: false
+      };
+
+      this._webTorrentClient.add(magnetURI, opts, function (torrent) {
+        /* Look for the file that ends in .webm and render it, in the future we can
+         * add additional file types for scaling. E.g other video formats or even VR!
+         */
+
+        var file = torrent.files.find(function (file) {
+          return file.name.endsWith('.webm');
+        });
+
+        torrent.on('download', function (bytes) {
+          console.log('just downloaded: ' + bytes);
+          console.log('total downloaded: ' + torrent.downloaded);
+          console.log('download speed: ' + torrent.downloadSpeed);
+          console.log('progress: ' + torrent.progress);
+        });
+
+        torrent.on('wire', function (wire, addr) {
+          console.log('Connected to peer with address ' + addr);
+        }
+
+        // Stream the file in the browser
+        );file.renderTo(_this2._options.renderTo, {
+          autoplay: true
+        }
+
+        // listens for when torrents are done and appends total downloaded to menu
+        );torrent.on('done', function () {
+          console.log('Torrent done');
+        });
+      });
+    }
+  }]);
+
+  return Viewer;
+}(EventEmitter);
+
+module.exports = Viewer;
 
 /***/ })
 /******/ ]);

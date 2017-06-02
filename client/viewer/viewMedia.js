@@ -3,7 +3,6 @@ const viewer = new Viewer({
   announceList: ['ws://127.0.0.1:9000']
 })
 
-
 $('#button-download').click(function () {
   viewer.start($('#magnetLink').val())
 })
